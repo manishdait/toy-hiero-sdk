@@ -55,6 +55,7 @@ public class AccountCreateTransaction extends Transaction<AccountCreateTransacti
   private CryptoCreateTransactionBody toProto() {
     return CryptoCreateTransactionBody.newBuilder()
       .setKey(key.toProto())
+      .setMemo(this.accountMemo)
       .setInitialBalance(this.initialBalance)
       .setAutoRenewPeriod(this.autoRenewPeriod.toProto())
       .setMaxAutomaticTokenAssociations(this.maxAutomaticTokenAssociations)

@@ -1,0 +1,2 @@
+# toy-hiero-sdk
+A Implementation of Hiero implemented in Java, created to understand how the real SDK works under the hood. It is intentionally simplified and intended purely for learning and experimental purposes only.
