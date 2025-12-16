@@ -6,7 +6,6 @@ import com.hedera.hashgraph.sdk.proto.SignaturePair;
 import com.hedera.hashgraph.sdk.proto.TransactionBody;
 import com.hedera.hashgraph.sdk.proto.TransactionResponse;
 import io.grpc.CallOptions;
-import io.grpc.ClientCall;
 import io.grpc.ManagedChannel;
 import io.grpc.MethodDescriptor;
 import io.grpc.stub.ClientCalls;
@@ -26,7 +25,7 @@ public class PackedTransaction<T extends Transaction<T>> {
   private final Supplier<MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction, TransactionResponse>> method;
   private final Client client;
 
-  private Map<PublicKey, byte[]> signatures = new HashMap<>();
+  private final Map<PublicKey, byte[]> signatures = new HashMap<>();
 
   protected PackedTransaction(
     @NonNull Client client,
@@ -58,6 +57,7 @@ public class PackedTransaction<T extends Transaction<T>> {
     signWith(client.getOperatorPrivateKey());
 
     final SignatureMap.Builder signatureMapBuilder = SignatureMap.newBuilder();
+
     for (PublicKey key : signatures.keySet()) {
       signatureMapBuilder.addSigPair(
         SignaturePair.newBuilder()
@@ -67,15 +67,21 @@ public class PackedTransaction<T extends Transaction<T>> {
       );
     }
 
-
     com.hedera.hashgraph.sdk.proto.Transaction transactionProto = com.hedera.hashgraph.sdk.proto.Transaction.newBuilder()
       .setBodyBytes(transactionBody.toByteString())
       .setSigMap(signatureMapBuilder.build())
       .build();
 
     ManagedChannel channel = client.getNode().getChannel();
-    ClientCall<com.hedera.hashgraph.sdk.proto.Transaction, TransactionResponse> clientCall = channel.newCall(method.get(), CallOptions.DEFAULT);
-    var res = ClientCalls.blockingUnaryCall(clientCall, transactionProto);
-    return org.example.sdk.transaction.TransactionResponse.fromProto(TransactionId.fromProto(transactionBody.getTransactionID()), res);
+    var transactionResponseProto = ClientCalls.blockingUnaryCall(
+      channel.newCall(method.get(), CallOptions.DEFAULT),
+      transactionProto
+    );
+
+    return org.example.sdk.transaction.TransactionResponse.fromProto(
+      client,
+      TransactionId.fromProto(transactionBody.getTransactionID()),
+      transactionResponseProto
+    );
   }
 }

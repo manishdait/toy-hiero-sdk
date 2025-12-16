@@ -16,8 +16,7 @@ public class Client {
   };
 
   public static Client forTestnet() {
-    final Network network = new Network();
-    return new Client(network);
+    return new Client(new Network());
   }
 
   public void setOperatorAccount(@NonNull final Account operatorAccount) {

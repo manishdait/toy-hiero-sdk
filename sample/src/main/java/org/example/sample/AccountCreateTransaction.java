@@ -4,6 +4,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.example.sdk.Client;
 import org.example.sdk.account.AccountId;
 import org.example.sdk.key.PrivateKey;
+import org.example.sdk.transaction.TransactionReceipt;
 import org.example.sdk.transaction.TransactionResponse;
 
 public class AccountCreateTransaction {
@@ -22,5 +23,8 @@ public class AccountCreateTransaction {
       .withMemo("Test SDK")
       .pack(client)
       .send();
+
+    TransactionReceipt receipt = transactionResponse.queryReceipt();
+    System.out.println(receipt);
   }
 }
