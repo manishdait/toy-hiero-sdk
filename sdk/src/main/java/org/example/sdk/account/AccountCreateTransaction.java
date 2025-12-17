@@ -21,6 +21,7 @@ public class AccountCreateTransaction extends Transaction<AccountCreateTransacti
 
   public AccountCreateTransaction() {
     this.autoRenewPeriod = Duration.of(7_890_000L);
+    this.accountMemo = "";
   }
 
   public AccountCreateTransaction withKey(Key key) {
