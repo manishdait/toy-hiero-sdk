@@ -97,7 +97,7 @@ public final class ED25519PublicKey implements PublicKey {
   /**
    * Returns the DER encoding of this Ed25519 public key.
    *
-   * @return a byte array containing the DER-encoded representation of this Ed25519 prublic key
+   * @return a byte array containing the DER-encoded representation of this Ed25519 public key
    * @throws RuntimeException if the key cannot be encoded to DER
    */
   @Override
@@ -113,9 +113,9 @@ public final class ED25519PublicKey implements PublicKey {
   }
 
   /**
-   * Returns the hexadecimal string representation of the raw Ed25519 public key seed.
+   * Returns the hexadecimal string representation of the raw Ed25519 public key bytes.
    *
-   * @return a hexadecimal string representation of the 32-byte Ed25519 public key seed
+   * @return a hexadecimal string representation of the 32-byte Ed25519 public key bytes
    */
   @Override
   public @NonNull String toHexString() {

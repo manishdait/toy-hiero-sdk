@@ -1,6 +1,5 @@
 package org.example.sdk.internal;
 
-import com.hedera.hashgraph.sdk.proto.Key;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -175,16 +174,6 @@ public final class ED25519PrivateKey implements PrivateKey {
   @Override
   public @NonNull String toDERHex() {
     return Hex.toHexString(this.getDERBytes());
-  }
-
-  /**
-   * Converts the key into protobuf representation {@link Key}.
-   *
-   * @return protobuf {@link Key} representation
-   */
-  @Override
-  public @NonNull Key toProto() {
-    return getPublicKey().toProto();
   }
 
   @Override
