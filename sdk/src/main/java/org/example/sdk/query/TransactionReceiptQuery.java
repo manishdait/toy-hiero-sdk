@@ -2,6 +2,7 @@ package org.example.sdk.query;
 
 import com.hedera.hashgraph.sdk.proto.*;
 import io.grpc.CallOptions;
+import io.grpc.MethodDescriptor;
 import io.grpc.stub.ClientCalls;
 import org.example.sdk.Client;
 import org.example.sdk.Status;
@@ -12,9 +13,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 import java.util.Objects;
 
-public class TransactionReceiptQuery {
-  private static final int MAX_ATTEMPTS = 10;
-
+public class TransactionReceiptQuery extends Query {
   private TransactionId transactionId;
   private boolean includeDuplicates;
   private boolean includeChildren;
@@ -47,7 +46,6 @@ public class TransactionReceiptQuery {
 
   public TransactionReceiptQuery withTransactionId(@NonNull final TransactionId transactionId) {
     Objects.requireNonNull(transactionId, "transactionId must not be null");
-
     this.transactionId = transactionId;
     return this;
   }
@@ -62,46 +60,32 @@ public class TransactionReceiptQuery {
     return this;
   }
 
-  public TransactionReceipt query(final @NonNull Client client) {
-    Objects.requireNonNull(client, "client must not be null");
-
-    final List<Status> RETRYABLE_RESPONSE = List.of(
-      Status.UNKNOWN,
-      Status.BUSY,
-      Status.RECEIPT_NOT_FOUND,
-      Status.RECORD_NOT_FOUND,
-      Status.PLATFORM_NOT_ACTIVE
-    );
-
+  @Override
+  public com.hedera.hashgraph.sdk.proto.Query toProto() {
     var receiptQuery = TransactionGetReceiptQuery.newBuilder()
       .setTransactionID(this.transactionId.toProto())
+      .setIncludeChildReceipts(this.includeChildren)
+      .setIncludeDuplicates(this.includeDuplicates)
       .setHeader(QueryHeader.newBuilder().setResponseType(ResponseType.ANSWER_ONLY).build())
       .build();
 
-    var query = Query.newBuilder()
+    return com.hedera.hashgraph.sdk.proto.Query.newBuilder()
       .setTransactionGetReceipt(receiptQuery)
       .build();
+  }
 
-    var method = CryptoServiceGrpc.getGetTransactionReceiptsMethod();
+  @Override
+  protected ResponseHeader getResponseHeader(Response response) {
+    return response.getTransactionGetReceipt().getHeader();
+  }
 
-    for (int i = 0; i < MAX_ATTEMPTS; i++) {
-      var call = client.getNode().getChannel().newCall(method, CallOptions.DEFAULT);
-      var receipt = ClientCalls.blockingUnaryCall(call, query);
-      if (!receipt.hasTransactionGetReceipt()) {
-        break;
-      }
+  @Override
+  protected MethodDescriptor<com.hedera.hashgraph.sdk.proto.Query, Response> getMethodDescriptor() {
+    return CryptoServiceGrpc.getGetTransactionReceiptsMethod();
+  }
 
-      var receiptProto = receipt.getTransactionGetReceipt().getReceipt();
-
-      if (Status.valueOf(receiptProto.getStatus()) == Status.SUCCESS) {
-        return TransactionReceipt.fromProto(receiptProto);
-      }
-
-      if (!RETRYABLE_RESPONSE.contains(Status.valueOf(receiptProto.getStatus()))) {
-        throw new RuntimeException("Fail to query receipt status " + Status.valueOf(receiptProto.getStatus()).toString());
-      }
-    }
-
+  public TransactionReceipt query(final @NonNull Client client) {
+    Objects.requireNonNull(client, "client must not be null");
     throw new RuntimeException("Unable to fetch transactionReceipt");
   }
 }
