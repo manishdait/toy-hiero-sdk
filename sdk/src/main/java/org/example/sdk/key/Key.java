@@ -12,6 +12,7 @@ public interface Key {
    * @return a {@link com.hedera.hashgraph.sdk.proto.Key} representing the protobuf object
    */
   com.hedera.hashgraph.sdk.proto.Key toProto();
+
   byte[] getBytes();
   byte[] getDERBytes();
   @NonNull String toHexString();

@@ -55,6 +55,7 @@ public interface PrivateKey extends Key {
    *
    * @return protobuf {@link com.hedera.hashgraph.sdk.proto.Key} representation
    */
+  @Override
   default com.hedera.hashgraph.sdk.proto.Key toProto() {
     return getPublicKey().toProto();
   }
