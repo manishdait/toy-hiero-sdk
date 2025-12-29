@@ -11,4 +11,5 @@ module org.example.sdk {
   exports org.example.sdk.network;
   exports org.example.sdk.account;
   exports org.example.sdk.transaction;
+  exports org.example.sdk.query;
 }

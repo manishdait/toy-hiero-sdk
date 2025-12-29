@@ -18,7 +18,7 @@ public abstract class Query {
   protected static final int MAX_ATTEMPTS = 10;
 
   protected abstract ResponseHeader getResponseHeader(@NonNull final Response response);
-  public abstract com.hedera.hashgraph.sdk.proto.Query toProto();
+  public abstract com.hedera.hashgraph.sdk.proto.Query toProto(@NonNull final Client client);
   protected abstract MethodDescriptor<com.hedera.hashgraph.sdk.proto.Query, Response> getMethodDescriptor();
 
   protected boolean shouldRetry(@NonNull final ResponseCodeEnum responseCodeEnum) {
@@ -37,10 +37,9 @@ public abstract class Query {
   protected Response performQuery(@NonNull final Client client) {
     for (int i = 0; i <= MAX_ATTEMPTS; i++) {
       var call = client.getNode().getChannel().newCall(this.getMethodDescriptor(), CallOptions.DEFAULT);
-      var response = ClientCalls.blockingUnaryCall(call, this.toProto());
+      var response = ClientCalls.blockingUnaryCall(call, this.toProto(client));
 
       var header = getResponseHeader(response);
-      System.out.println(Status.fromResponseCode(header.getNodeTransactionPrecheckCode().getNumber()));
       if (Status.fromResponseCode(header.getNodeTransactionPrecheckCode().getNumber()) == Status.OK) {
         return response;
       }

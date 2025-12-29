@@ -6,6 +6,7 @@ import io.grpc.MethodDescriptor;
 import io.grpc.stub.ClientCalls;
 import org.example.sdk.Client;
 import org.example.sdk.Status;
+import org.example.sdk.account.AccountInfo;
 import org.example.sdk.transaction.TransactionId;
 import org.example.sdk.transaction.TransactionReceipt;
 import org.jspecify.annotations.NonNull;
@@ -61,7 +62,7 @@ public class TransactionReceiptQuery extends Query {
   }
 
   @Override
-  public com.hedera.hashgraph.sdk.proto.Query toProto() {
+  public com.hedera.hashgraph.sdk.proto.Query toProto(@NonNull final Client client) {
     var receiptQuery = TransactionGetReceiptQuery.newBuilder()
       .setTransactionID(this.transactionId.toProto())
       .setIncludeChildReceipts(this.includeChildren)
@@ -84,8 +85,23 @@ public class TransactionReceiptQuery extends Query {
     return CryptoServiceGrpc.getGetTransactionReceiptsMethod();
   }
 
+
+
   public TransactionReceipt query(final @NonNull Client client) {
     Objects.requireNonNull(client, "client must not be null");
-    throw new RuntimeException("Unable to fetch transactionReceipt");
+    var receipt = this.performQuery(client).getTransactionGetReceipt().getReceipt();
+
+    for (int i = 0; i < MAX_ATTEMPTS; i++) {
+      if (shouldRetry(receipt.getStatus())) {
+        receipt = this.performQuery(client).getTransactionGetReceipt().getReceipt();
+        continue;
+      }
+
+      if (Status.valueOf(receipt.getStatus()) == Status.SUCCESS) {
+        return TransactionReceipt.fromProto(receipt);
+      }
+    }
+
+    return TransactionReceipt.fromProto(receipt);
   }
 }
