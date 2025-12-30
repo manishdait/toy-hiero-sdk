@@ -8,7 +8,6 @@ import io.grpc.MethodDescriptor;
 import io.grpc.stub.ClientCalls;
 import org.example.sdk.Client;
 import org.example.sdk.Status;
-import org.example.sdk.transaction.TransactionReceipt;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;

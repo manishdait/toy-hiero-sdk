@@ -10,6 +10,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.MethodDescriptor;
 import io.grpc.stub.ClientCalls;
 import org.example.sdk.Client;
+import org.example.sdk.key.KeyType;
 import org.example.sdk.key.PrivateKey;
 import org.example.sdk.key.PublicKey;
 import org.jspecify.annotations.NonNull;
@@ -59,12 +60,21 @@ public class PackedTransaction<T extends Transaction<T>> {
     final SignatureMap.Builder signatureMapBuilder = SignatureMap.newBuilder();
 
     for (PublicKey key : signatures.keySet()) {
-      signatureMapBuilder.addSigPair(
-        SignaturePair.newBuilder()
-          .setPubKeyPrefix(ByteString.copyFrom(key.getBytes()))
-          .setEd25519(ByteString.copyFrom(signatures.get(key)))
-          .build()
-      );
+      if (key.getType() == KeyType.ED25519) {
+        signatureMapBuilder.addSigPair(
+          SignaturePair.newBuilder()
+            .setPubKeyPrefix(ByteString.copyFrom(key.getBytes()))
+            .setEd25519(ByteString.copyFrom(signatures.get(key)))
+            .build()
+        );
+      } else if (key.getType() == KeyType.ECDSA) {
+        signatureMapBuilder.addSigPair(
+          SignaturePair.newBuilder()
+            .setPubKeyPrefix(ByteString.copyFrom(key.getBytes()))
+            .setECDSASecp256K1(ByteString.copyFrom(signatures.get(key)))
+            .build()
+        );
+      }
     }
 
     com.hedera.hashgraph.sdk.proto.Transaction transactionProto = com.hedera.hashgraph.sdk.proto.Transaction.newBuilder()
