@@ -14,6 +14,14 @@ public class Node {
 
   private ManagedChannel channel;
 
+  public Node(@NonNull final String address, @NonNull final String accountId) {
+    this(
+      address.split(":")[0],
+      Integer.parseInt(address.split(":")[1]),
+      AccountId.fromString(accountId)
+    );
+  }
+
   public Node(@NonNull final String address, final int port, @NonNull final AccountId accountId) {
     Objects.requireNonNull(address, "address must not be null.");
     Objects.requireNonNull(accountId, "accountId must not be null.");

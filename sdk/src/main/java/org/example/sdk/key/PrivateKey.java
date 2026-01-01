@@ -1,6 +1,6 @@
 package org.example.sdk.key;
 
-import org.example.sdk.internal.KeyFactory;
+import org.example.sdk.internal.key.KeyFactory;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;

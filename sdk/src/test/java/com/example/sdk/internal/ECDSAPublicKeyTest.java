@@ -2,8 +2,8 @@ package com.example.sdk.internal;
 
 import org.assertj.core.api.Assertions;
 import org.bouncycastle.util.encoders.Hex;
-import org.example.sdk.internal.ECDSAPrivateKey;
-import org.example.sdk.internal.ECDSAPublicKey;
+import org.example.sdk.internal.key.ECDSAPrivateKey;
+import org.example.sdk.internal.key.ECDSAPublicKey;
 import org.example.sdk.key.KeyType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -3,7 +3,7 @@ package com.example.sdk.internal;
 import org.assertj.core.api.Assertions;
 import org.bouncycastle.math.ec.rfc8032.Ed25519;
 import org.bouncycastle.util.encoders.Hex;
-import org.example.sdk.internal.ED25519PrivateKey;
+import org.example.sdk.internal.key.ED25519PrivateKey;
 import org.example.sdk.key.KeyType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

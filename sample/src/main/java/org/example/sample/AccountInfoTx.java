@@ -39,7 +39,7 @@ public class AccountInfoTx {
     System.out.println("Account Create with ID: " + receipt.accountId());
 
     AccountInfo accountInfo = new AccountInfoQuery()
-      .withAccountId(AccountId.fromString("0.0.7519142"))
+      .withAccountId(accountId)
       .query(client);
 
     System.out.println(accountInfo);

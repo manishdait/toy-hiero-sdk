@@ -1,4 +1,4 @@
-package org.example.sdk.internal;
+package org.example.sdk.internal.key;
 
 import com.google.protobuf.ByteString;
 import com.hedera.hashgraph.sdk.proto.Key;

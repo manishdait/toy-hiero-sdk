@@ -4,19 +4,32 @@ import org.example.sdk.account.Account;
 import org.example.sdk.account.AccountId;
 import org.example.sdk.key.PrivateKey;
 import org.example.sdk.network.Network;
+import org.example.sdk.network.NetworkType;
 import org.example.sdk.network.Node;
 import org.jspecify.annotations.NonNull;
 
 public class Client {
   private Account operatorAccount;
-  private Network network;
+  private final Network network;
 
   private Client(@NonNull final Network network) {
     this.network = network;
   };
 
   public static Client forTestnet() {
-    return new Client(new Network());
+    return new Client(new Network(NetworkType.TESTNET));
+  }
+
+  public static Client forMainnet() {
+    return new Client(new Network(NetworkType.MAINNET));
+  }
+
+  public static Client forPreviewnet() {
+    return new Client(new Network(NetworkType.PREVIEWNET));
+  }
+
+  public static Client forSolo() {
+    return new Client(new Network(NetworkType.SOLO));
   }
 
   public void setOperatorAccount(@NonNull final Account operatorAccount) {
@@ -41,5 +54,9 @@ public class Client {
 
   public PrivateKey getOperatorPrivateKey() {
     return this.operatorAccount.privateKey();
+  }
+
+  public Network getNetwork() {
+    return this.network;
   }
 }

@@ -1,4 +1,4 @@
-package org.example.sdk.internal;
+package org.example.sdk.internal.key;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.DEROctetString;

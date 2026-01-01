@@ -1,8 +1,8 @@
 package org.example.sdk.key;
 
-import org.example.sdk.internal.ECDSAPublicKey;
-import org.example.sdk.internal.ED25519PublicKey;
-import org.example.sdk.internal.KeyFactory;
+import org.example.sdk.internal.key.ECDSAPublicKey;
+import org.example.sdk.internal.key.ED25519PublicKey;
+import org.example.sdk.internal.key.KeyFactory;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;

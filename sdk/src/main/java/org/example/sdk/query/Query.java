@@ -46,6 +46,8 @@ public abstract class Query {
       if (!shouldRetry(header.getNodeTransactionPrecheckCode())) {
         throw new RuntimeException("Fail to query receipt status " + Status.valueOf(header.getNodeTransactionPrecheckCode()).toString());
       }
+
+      client.getNetwork().selectNode();
     }
 
     throw new RuntimeException("Fail to get query result timeout");

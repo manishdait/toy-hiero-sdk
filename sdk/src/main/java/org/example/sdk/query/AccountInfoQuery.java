@@ -2,9 +2,7 @@ package org.example.sdk.query;
 
 import com.google.protobuf.ByteString;
 import com.hedera.hashgraph.sdk.proto.*;
-import io.grpc.CallOptions;
 import io.grpc.MethodDescriptor;
-import io.grpc.stub.ClientCalls;
 import org.example.sdk.Client;
 import org.example.sdk.account.AccountId;
 import org.example.sdk.account.AccountInfo;
