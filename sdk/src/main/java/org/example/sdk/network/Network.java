@@ -1,6 +1,7 @@
 package org.example.sdk.network;
 
-import org.example.sdk.internal.constant.NetworkConstant;
+import org.example.sdk.internal.network.NetworkConstant;
+import org.example.sdk.internal.network.NetworkUtils;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
@@ -12,11 +13,11 @@ public class Network {
 
   private int nodeIndex;
 
-  public Network(final @NonNull NetworkType networkType) {
+  public Network(@NonNull final NetworkType networkType) {
     Objects.requireNonNull(networkType, "networkType must not be null");
 
     this.networkType = networkType;
-    this.nodes = NetworkConstant.DEFAULT_NODES.get(networkType);
+    this.nodes = fetchNodes(networkType);
     this.nodeIndex = 0;
   }
 
@@ -32,5 +33,16 @@ public class Network {
     nodeIndex++;
     nodeIndex = nodeIndex % nodes.size();
     return getNode();
+  }
+
+  private List<Node> fetchNodes(@NonNull final NetworkType networkType) {
+    Objects.requireNonNull(networkType, "networkType must not be null");
+    var nodes = NetworkUtils.fetchNodes(networkType);
+
+    if (nodes.isEmpty()) {
+      nodes = NetworkConstant.DEFAULT_NODES.get(networkType);
+    }
+
+    return nodes;
   }
 }

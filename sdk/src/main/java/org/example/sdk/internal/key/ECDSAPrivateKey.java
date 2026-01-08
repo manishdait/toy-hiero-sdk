@@ -1,6 +1,5 @@
 package org.example.sdk.internal.key;
 
-import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.sec.ECPrivateKey;
@@ -13,7 +12,6 @@ import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
-import org.bouncycastle.math.ec.ECPoint;
 import org.bouncycastle.util.encoders.Hex;
 import org.example.sdk.key.KeyType;
 import org.example.sdk.key.PrivateKey;
@@ -47,48 +45,31 @@ public final class ECDSAPrivateKey implements PrivateKey {
     );
   }
 
-  /**
-   * Creates a new ECDSA private key from a 32-byte scalar.
-   *
-   * @param scalar the ECDSA private key scalar (32 bytes)
-   */
   private ECDSAPrivateKey(final byte[] scalar) {
     this.scalar = scalar.clone();
   }
 
-  /**
-   * Generates a new random secp256k1 ECDSA private key.
-   *
-   * @return a newly generated {@link ECDSAPrivateKey}
-   */
   public static @NonNull ECDSAPrivateKey generate() {
-    final SecureRandom random = new SecureRandom();
-    final BigInteger n = CURVE.getN();
+    final var random = new SecureRandom();
+    final var n = CURVE.getN();
 
     BigInteger d;
     do {
-      byte[] buf = new byte[SCALAR_SIZE];
-      random.nextBytes(buf);
-      d = new BigInteger(1, buf);
+      byte[] buff = new byte[SCALAR_SIZE];
+      random.nextBytes(buff);
+      d = new BigInteger(1, buff);
     } while (d.signum() == 0 || d.compareTo(n) >= 0);
 
     return new ECDSAPrivateKey(toFixed(d));
   }
 
-  /**
-   * Creates an ECDSA private key from bytes.
-   *
-   * @param bytes private key bytes
-   * @return a new instance of {@link ECDSAPrivateKey}
-   * @throws RuntimeException if invalid bytes or the scalar is out of range
-   */
   public static @NonNull ECDSAPrivateKey fromBytes(final byte[] bytes) {
     if (bytes.length == SCALAR_SIZE) {
       return fromScalar(bytes);
     }
 
     if (hasPrefix(bytes)) {
-      byte[] scalar = Arrays.copyOfRange(
+      var scalar = Arrays.copyOfRange(
         bytes,
         LEGACY_PREFIX_BYTES.length,
         bytes.length
@@ -97,8 +78,9 @@ public final class ECDSAPrivateKey implements PrivateKey {
     }
 
     try {
-      PrivateKeyInfo pki = PrivateKeyInfo.getInstance(bytes);
-      ASN1Encodable key = pki.parsePrivateKey();
+      var pki = PrivateKeyInfo.getInstance(bytes);
+      // ANS1Encodable
+      var key = pki.parsePrivateKey();
 
       // PKCS#8 wrapping SEC1
       if (key instanceof ASN1OctetString octets) {
@@ -106,71 +88,54 @@ public final class ECDSAPrivateKey implements PrivateKey {
       }
 
       // PKCS#8 → SEC1
-      ECPrivateKey ec = ECPrivateKey.getInstance(key);
+      var ec = ECPrivateKey.getInstance(key);
       return fromScalar(toFixed(ec.getKey()));
-    } catch (Exception ignored) {}
+    } catch (Exception e) {
+      // fallback
+    }
 
     try {
-      ECPrivateKey ec = ECPrivateKey.getInstance(bytes);
+      var ec = ECPrivateKey.getInstance(bytes);
       return fromScalar(toFixed(ec.getKey()));
-    } catch (Exception ignored) {}
+    } catch (Exception e) {
+      // fallback
+    }
 
     throw new RuntimeException("Invalid ECDSA private key encoding");
   }
 
-  /**
-   * Creates an ECDSA private key from a hexadecimal string.
-   *
-   * @param str hexadecimal representation of the private key
-   * @return a new instance of {@link ECDSAPrivateKey}
-   */
   public static @NonNull ECDSAPrivateKey fromString(final @NonNull String str) {
     Objects.requireNonNull(str, "str must not be null");
     return fromBytes(Hex.decode(str.replaceFirst("^0x", "")));
   }
 
-  /**
-   * Derives the corresponding ECDSA public key.
-   *
-   * @return a {@link ECDSAPublicKey} for the corresponding private key
-   */
   @Override
   public @NonNull PublicKey getPublicKey() {
-    final BigInteger d = new BigInteger(1, scalar);
-    final ECPoint q = CURVE.getG().multiply(d).normalize();
+    final var d = new BigInteger(1, scalar);
+    // Ec Point
+    final var q = CURVE.getG().multiply(d).normalize();
     return ECDSAPublicKey.fromBytes(q.getEncoded(true));
   }
 
-  /**
-   * Returns the type of private key.
-   *
-   * @return the {@link KeyType} for the private key
-   */
   @Override
   public @NonNull KeyType getType() {
     return KeyType.ECDSA;
   }
 
-  /**
-   * Returns the raw 32-byte ECDSA private key scalar.
-   *
-   * @return a copy of the private key scalar
-   */
   @Override
   public byte[] getBytes() {
     return this.scalar.clone();
   }
 
-  /**
-   * Returns the DER encoding of this ECDSA private key.
-   *
-   * @return a byte array containing the DER-encoded representation of this ECDSA private key
-   * @throws RuntimeException if the key cannot be encoded to DER
-   */
   @Override
   public byte[] getDERBytes() {
     try {
-      var ecPrivateKey = new ECPrivateKey(CURVE.getN().bitLength(), new BigInteger(1, scalar), null, null);
+      var ecPrivateKey = new ECPrivateKey(
+        CURVE.getN().bitLength(),
+        new BigInteger(1, scalar),
+        null,
+        null
+      );
 
       var pki = new PrivateKeyInfo(
         new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey, SECObjectIdentifiers.secp256k1),
@@ -183,32 +148,16 @@ public final class ECDSAPrivateKey implements PrivateKey {
     }
   }
 
-  /**
-   * Returns the hexadecimal string representation of the raw ECDSA private key scalar.
-   *
-   * @return a hexadecimal string representation of the 32-byte ECDSA private key scalar
-   */
   @Override
   public @NonNull String toHexString() {
     return Hex.toHexString(this.getBytes());
   }
 
-  /**
-   * Returns the hexadecimal string representation of this ECDSA private key encoded in DER format.
-   *
-   * @return a hexadecimal string of the DER-encoded ECDSA private key
-   */
   @Override
   public @NonNull String toDERHex() {
     return Hex.toHexString(this.getDERBytes());
   }
 
-  /**
-   * Signs a message using ECDSA over secp256k1.
-   *
-   * @param message the message to sign
-   * @return the 64-byte ECDSA signature
-   */
   @Override
   public byte[] sign(byte[] message) {
     byte[] hash = Keccak256Utils.keccak256(message);
@@ -254,9 +203,13 @@ public final class ECDSAPrivateKey implements PrivateKey {
   private static byte[] toFixed(BigInteger v) {
     byte[] raw = v.toByteArray();
     byte[] out = new byte[32];
-    System.arraycopy(raw, Math.max(0, raw.length - 32),
-      out, Math.max(0, 32 - raw.length),
-      Math.min(32, raw.length));
+    System.arraycopy(
+      raw,
+      Math.max(0, raw.length - 32),
+      out,
+      Math.max(0, 32 - raw.length),
+      Math.min(32, raw.length)
+    );
     return out;
   }
 

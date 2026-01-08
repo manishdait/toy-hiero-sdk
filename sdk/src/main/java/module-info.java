@@ -5,6 +5,9 @@ module org.example.sdk {
   requires org.jspecify;
   requires com.google.protobuf;
   requires io.grpc.stub;
+  requires java.net.http;
+  requires com.fasterxml.jackson.core;
+  requires com.fasterxml.jackson.databind;
 
   exports org.example.sdk;
   exports org.example.sdk.key;

@@ -1,4 +1,4 @@
-package com.example.sdk.internal;
+package com.example.sdk.internal.key;
 
 import org.assertj.core.api.Assertions;
 import org.bouncycastle.math.ec.rfc8032.Ed25519;

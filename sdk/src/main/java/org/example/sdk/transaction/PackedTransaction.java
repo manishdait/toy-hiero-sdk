@@ -88,6 +88,8 @@ public class PackedTransaction<T extends Transaction<T>> {
       transactionProto
     );
 
+    System.out.println(transactionResponseProto);
+
     return org.example.sdk.transaction.TransactionResponse.fromProto(
       client,
       TransactionId.fromProto(transactionBody.getTransactionID()),

@@ -40,28 +40,18 @@ import java.util.Objects;
 public class ECDSAPublicKey implements PublicKey {
   private final byte[] bytes;
 
-  /**
-   * Creates a new ECDSA public key from raw key bytes.
-   *
-   * @param bytes the raw 32-byte ECDSA public key
-   */
   private ECDSAPublicKey(byte[] bytes) {
     this.bytes = bytes.clone();
   }
 
-  /**
-   * Parse an ECDSA public key from its byte representation.
-   *
-   * @param bytes the public key bytes
-   * @return the parsed {@link ECDSAPublicKey}
-   * @throws RuntimeException if the bytes are invalid or not Ed25519
-   */
   public static @NonNull ECDSAPublicKey fromBytes(final byte[] bytes) {
     ECPoint point;
     var curve = ECDSAPrivateKey.CURVE;
 
     if (bytes.length == 32) {
-      throw new RuntimeException("Cannot generate public key from raw 32-byte scalar directly here. Use ECDSAPrivateKey.getPublicKey()");
+      throw new RuntimeException(
+          "Cannot generate public key from raw 32-byte scalar directly here. Use ECDSAPrivateKey.getPublicKey()"
+      );
     }
 
     try {
@@ -69,7 +59,7 @@ public class ECDSAPublicKey implements PublicKey {
       var pointBytes = spki.getPublicKeyData().getBytes();
       var p = curve.getCurve().decodePoint(pointBytes);
       return new ECDSAPublicKey(p.getEncoded(true));
-    } catch (Exception ignored) {
+    } catch (Exception e) {
       // fallback
     }
 
@@ -89,23 +79,11 @@ public class ECDSAPublicKey implements PublicKey {
     return new ECDSAPublicKey(point.getEncoded(true));
   }
 
-  /**
-   * Parse an ECDSA public key from a hexadecimal string.
-   *
-   * @param str hexadecimal representation of the public key
-   * @return the parsed {@link ECDSAPublicKey}
-   * @throws RuntimeException if the hexadecimal string is invalid
-   */
   public static @NonNull ECDSAPublicKey fromString(final @NonNull String str) {
     Objects.requireNonNull(str, "str must not be null");
     return fromBytes(Hex.decode(str.replaceFirst("^0x", "")));
   }
 
-  /**
-   * Converts this public key to its protobuf representation.
-   *
-   * @return protobuf {@link Key} representation
-   */
   @Override
   public Key toProto() {
     return Key.newBuilder()
@@ -113,22 +91,11 @@ public class ECDSAPublicKey implements PublicKey {
       .build();
   }
 
-  /**
-   * Returns the raw 32-byte ECDSA public key.
-   *
-   * @return a copy of the public key bytes
-   */
   @Override
   public byte[] getBytes() {
     return this.bytes.clone();
   }
 
-  /**
-   * Returns the DER encoding of this ECDSA public key.
-   *
-   * @return a byte array containing the DER-encoded representation of this ECDSA public key
-   * @throws RuntimeException if the key cannot be encoded to DER
-   */
   @Override
   public byte[] getDERBytes() {
     try {
@@ -143,43 +110,21 @@ public class ECDSAPublicKey implements PublicKey {
     }
   }
 
-  /**
-   * Returns the hexadecimal string representation of the raw ECDSA public key bytes.
-   *
-   * @return a hexadecimal string representation of the 32-byte ECDSA public key bytes
-   */
   @Override
   public @NonNull String toHexString() {
     return Hex.toHexString(this.getBytes());
   }
 
-  /**
-   * Returns the hexadecimal string representation of this ECDSA public key encoded in DER format.
-   *
-   * @return a hexadecimal string of the DER-encoded ECDSA public key
-   */
   @Override
   public @NonNull String toDERHex() {
     return Hex.toHexString(this.getDERBytes());
   }
 
-  /**
-   * Returns the type of public key.
-   *
-   * @return the {@link KeyType} for the public key
-   */
   @Override
   public @NonNull KeyType getType() {
     return KeyType.ECDSA;
   }
 
-  /**
-   * Verifies an ECDSA signature over the given message.
-   *
-   * @param message the original message that was signed
-   * @param signature the 64-byte ECDSA signature to verify
-   * @return {@code true} if the signature is valid for the given message and this public key; {@code false} otherwise
-   */
   @Override
   public boolean verify(byte[] message, byte[] signature) {
     if (signature.length != 64) {
@@ -188,14 +133,14 @@ public class ECDSAPublicKey implements PublicKey {
 
     byte[] hash = Keccak256Utils.keccak256(message);
 
-    BigInteger r = new BigInteger(1, Arrays.copyOfRange(signature, 0, 32));
-    BigInteger s = new BigInteger(1, Arrays.copyOfRange(signature, 32, 64));
+    var r = new BigInteger(1, Arrays.copyOfRange(signature, 0, 32));
+    var s = new BigInteger(1, Arrays.copyOfRange(signature, 32, 64));
 
-    BigInteger n = ECDSAPrivateKey.CURVE.getN();
+    var n = ECDSAPrivateKey.CURVE.getN();
     if (r.signum() <= 0 || r.compareTo(n) >= 0) return false;
     if (s.signum() <= 0 || s.compareTo(n) >= 0) return false;
 
-    ECPoint q = ECDSAPrivateKey.CURVE
+    var q = ECDSAPrivateKey.CURVE
       .getCurve()
       .decodePoint(this.bytes)
       .normalize();
@@ -215,7 +160,7 @@ public class ECDSAPublicKey implements PublicKey {
   @Override
   public boolean equals(Object o) {
     if (o == this) return true;
-    if (o == null || this.getClass() !=o.getClass()) return false;
+    if (o == null || this.getClass() != o.getClass()) return false;
     return Arrays.equals(this.bytes, ((ECDSAPublicKey) o).bytes);
   }
 }

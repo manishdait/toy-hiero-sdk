@@ -41,9 +41,17 @@ public class Node {
 
   public ManagedChannel getChannel() {
     if (channel != null) return channel;
-
     channel = ManagedChannelBuilder.forAddress(this.address, this.port).usePlaintext().build();
-
     return channel;
+  }
+
+  @Override
+  public String toString() {
+    return "Node[" +
+      "address='" + address + '\'' +
+      ", port=" + port +
+      ", accountId=" + accountId +
+      ", channel=" + channel +
+      ']';
   }
 }

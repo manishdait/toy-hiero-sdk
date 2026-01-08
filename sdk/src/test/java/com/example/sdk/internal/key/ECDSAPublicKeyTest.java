@@ -1,4 +1,4 @@
-package com.example.sdk.internal;
+package com.example.sdk.internal.key;
 
 import org.assertj.core.api.Assertions;
 import org.bouncycastle.util.encoders.Hex;

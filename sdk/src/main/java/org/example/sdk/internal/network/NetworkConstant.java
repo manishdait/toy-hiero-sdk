@@ -1,4 +1,4 @@
-package org.example.sdk.internal.constant;
+package org.example.sdk.internal.network;
 
 import org.example.sdk.network.NetworkType;
 import org.example.sdk.network.Node;
@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class NetworkConstant {
-  public static Map<NetworkType, List<Node>> DEFAULT_NODES = Map.of(
+  public static final Map<NetworkType, List<Node>> DEFAULT_NODES = Map.of(
     NetworkType.MAINNET, List.of(
       new Node("35.237.200.180:50211", "0.0.3"),
       new Node("35.186.191.247:50211", "0.0.4"),
@@ -34,5 +34,12 @@ public class NetworkConstant {
     NetworkType.SOLO, List.of(
       new Node("localhost:50211", "0.0.3")
     )
+  );
+
+  public static final  Map<NetworkType, String> MIRROR_NODE_REST_API = Map.of(
+      NetworkType.MAINNET, "https://mainnet.mirrornode.hedera.com",
+      NetworkType.PREVIEWNET, "https://previewnet.mirrornode.hedera.com",
+      NetworkType.TESTNET, "https://testnet.mirrornode.hedera.com",
+      NetworkType.SOLO, "http://localhost:5551"
   );
 }
