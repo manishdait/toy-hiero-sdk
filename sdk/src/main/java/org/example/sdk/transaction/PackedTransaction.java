@@ -10,17 +10,22 @@ import io.grpc.ManagedChannel;
 import io.grpc.MethodDescriptor;
 import io.grpc.stub.ClientCalls;
 import org.example.sdk.Client;
+import org.example.sdk.Status;
+import org.example.sdk.internal.Executor;
+import org.example.sdk.internal.utils.ExecutionState;
 import org.example.sdk.key.KeyType;
 import org.example.sdk.key.PrivateKey;
 import org.example.sdk.key.PublicKey;
 import org.jspecify.annotations.NonNull;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class PackedTransaction<T extends Transaction<T>> {
+public class PackedTransaction<T extends Transaction<T>> extends
+  Executor<com.hedera.hashgraph.sdk.proto.Transaction, TransactionResponse> {
   private final TransactionBody transactionBody;
   private final Function<TransactionBody, T> unpacker;
   private final Supplier<MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction, TransactionResponse>> method;
@@ -54,9 +59,7 @@ public class PackedTransaction<T extends Transaction<T>> {
     return this;
   }
 
-  public org.example.sdk.transaction.TransactionResponse send() {
-    signWith(client.getOperatorPrivateKey());
-
+  private SignatureMap buildSignatureMap() {
     final SignatureMap.Builder signatureMapBuilder = SignatureMap.newBuilder();
 
     for (PublicKey key : signatures.keySet()) {
@@ -77,23 +80,48 @@ public class PackedTransaction<T extends Transaction<T>> {
       }
     }
 
-    com.hedera.hashgraph.sdk.proto.Transaction transactionProto = com.hedera.hashgraph.sdk.proto.Transaction.newBuilder()
-      .setBodyBytes(transactionBody.toByteString())
-      .setSigMap(signatureMapBuilder.build())
-      .build();
+    return signatureMapBuilder.build();
+  }
 
-    ManagedChannel channel = client.getNode().getChannel();
-    var transactionResponseProto = ClientCalls.blockingUnaryCall(
-      channel.newCall(method.get(), CallOptions.DEFAULT),
-      transactionProto
+  @Override
+  protected com.hedera.hashgraph.sdk.proto.Transaction buildRequest() {
+    signWith(client.getOperatorPrivateKey());
+
+    return com.hedera.hashgraph.sdk.proto.Transaction.newBuilder()
+      .setBodyBytes(this.transactionBody.toByteString())
+      .setSigMap(this.buildSignatureMap())
+      .build();
+  }
+
+  @Override
+  protected ExecutionState getExecutionState(TransactionResponse transactionResponse) {
+    final var retryable = List.of(
+      Status.PLATFORM_TRANSACTION_NOT_CREATED,
+      Status.PLATFORM_NOT_ACTIVE,
+      Status.BUSY
     );
 
-    System.out.println(transactionResponseProto);
+    final var status = Status.valueOf(transactionResponse.getNodeTransactionPrecheckCode());
+
+    if (status == Status.OK) return ExecutionState.FINISH;
+    if (retryable.contains(status)) return ExecutionState.RETRY;
+    if (status == Status.TRANSACTION_EXPIRED) return ExecutionState.EXPIRED;
+
+    return ExecutionState.FAIL;
+  }
+
+  @Override
+  protected MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction, TransactionResponse> getMethod() {
+    return this.method.get();
+  }
+
+  public org.example.sdk.transaction.TransactionResponse send() {
+    final var protoResponse = execute(this.client);
 
     return org.example.sdk.transaction.TransactionResponse.fromProto(
       client,
       TransactionId.fromProto(transactionBody.getTransactionID()),
-      transactionResponseProto
+      protoResponse
     );
   }
 }

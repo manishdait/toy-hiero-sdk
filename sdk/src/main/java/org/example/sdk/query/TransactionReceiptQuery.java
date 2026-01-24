@@ -1,17 +1,19 @@
 package org.example.sdk.query;
 
-import com.hedera.hashgraph.sdk.proto.*;
-import io.grpc.CallOptions;
+import com.hedera.hashgraph.sdk.proto.QueryHeader;
+import com.hedera.hashgraph.sdk.proto.Response;
+import com.hedera.hashgraph.sdk.proto.ResponseHeader;
+import com.hedera.hashgraph.sdk.proto.ResponseType;
+import com.hedera.hashgraph.sdk.proto.TransactionGetReceiptQuery;
+import com.hedera.hashgraph.sdk.proto.CryptoServiceGrpc;
+
 import io.grpc.MethodDescriptor;
-import io.grpc.stub.ClientCalls;
 import org.example.sdk.Client;
 import org.example.sdk.Status;
-import org.example.sdk.account.AccountInfo;
 import org.example.sdk.transaction.TransactionId;
 import org.example.sdk.transaction.TransactionReceipt;
 import org.jspecify.annotations.NonNull;
 
-import java.util.List;
 import java.util.Objects;
 
 public class TransactionReceiptQuery extends Query {
@@ -21,27 +23,15 @@ public class TransactionReceiptQuery extends Query {
 
   public TransactionReceiptQuery() {}
 
-  public TransactionReceiptQuery(
-    @NonNull final TransactionId transactionId,
-    final boolean includeDuplicates,
-    final boolean includeChildren
-  ) {
-    Objects.requireNonNull(transactionId, "transactionId must not be null");
-
-    this.transactionId = transactionId;
-    this.includeDuplicates = includeDuplicates;
-    this.includeChildren = includeChildren;
-  }
-
   public TransactionId getTransactionId() {
     return transactionId;
   }
 
-  public boolean isIncludeDuplicates() {
+  public boolean hasIncludeDuplicates() {
     return includeDuplicates;
   }
 
-  public boolean isIncludeChildren() {
+  public boolean hasIncludeChildren() {
     return includeChildren;
   }
 
@@ -76,7 +66,8 @@ public class TransactionReceiptQuery extends Query {
   }
 
   @Override
-  protected ResponseHeader getResponseHeader(Response response) {
+  protected ResponseHeader getResponseHeader(@NonNull final Response response) {
+    Objects.requireNonNull(response, "response must not be null");
     return response.getTransactionGetReceipt().getHeader();
   }
 
@@ -85,10 +76,9 @@ public class TransactionReceiptQuery extends Query {
     return CryptoServiceGrpc.getGetTransactionReceiptsMethod();
   }
 
-
-
-  public TransactionReceipt query(final @NonNull Client client) {
+  public TransactionReceipt query(@NonNull final Client client) {
     Objects.requireNonNull(client, "client must not be null");
+
     var receipt = this.performQuery(client).getTransactionGetReceipt().getReceipt();
 
     for (int i = 0; i < MAX_ATTEMPTS; i++) {

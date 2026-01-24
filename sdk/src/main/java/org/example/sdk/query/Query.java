@@ -3,6 +3,7 @@ package org.example.sdk.query;
 import com.hedera.hashgraph.sdk.proto.Response;
 import com.hedera.hashgraph.sdk.proto.ResponseCodeEnum;
 import com.hedera.hashgraph.sdk.proto.ResponseHeader;
+
 import io.grpc.CallOptions;
 import io.grpc.MethodDescriptor;
 import io.grpc.stub.ClientCalls;
@@ -16,12 +17,13 @@ import java.util.Objects;
 public abstract class Query {
   protected static final int MAX_ATTEMPTS = 10;
 
-  protected abstract ResponseHeader getResponseHeader(@NonNull final Response response);
+  protected abstract ResponseHeader getResponseHeader(final Response response);
   public abstract com.hedera.hashgraph.sdk.proto.Query toProto(@NonNull final Client client);
   protected abstract MethodDescriptor<com.hedera.hashgraph.sdk.proto.Query, Response> getMethodDescriptor();
 
   protected boolean shouldRetry(@NonNull final ResponseCodeEnum responseCodeEnum) {
     Objects.requireNonNull(responseCodeEnum, "responseCodeEnum must not be null");
+
     final List<Status> RETRYABLE_RESPONSE = List.of(
       Status.UNKNOWN,
       Status.BUSY,
@@ -34,6 +36,8 @@ public abstract class Query {
   }
 
   protected Response performQuery(@NonNull final Client client) {
+    Objects.requireNonNull(client, "client must not be null");
+
     for (int i = 0; i <= MAX_ATTEMPTS; i++) {
       var call = client.getNode().getChannel().newCall(this.getMethodDescriptor(), CallOptions.DEFAULT);
       var response = ClientCalls.blockingUnaryCall(call, this.toProto(client));

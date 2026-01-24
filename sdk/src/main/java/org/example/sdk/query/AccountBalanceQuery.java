@@ -1,6 +1,12 @@
 package org.example.sdk.query;
 
-import com.hedera.hashgraph.sdk.proto.*;
+import com.hedera.hashgraph.sdk.proto.CryptoGetAccountBalanceQuery;
+import com.hedera.hashgraph.sdk.proto.QueryHeader;
+import com.hedera.hashgraph.sdk.proto.Response;
+import com.hedera.hashgraph.sdk.proto.ResponseHeader;
+import com.hedera.hashgraph.sdk.proto.CryptoServiceGrpc;
+
+import com.hedera.hashgraph.sdk.proto.ResponseType;
 import io.grpc.MethodDescriptor;
 import org.example.sdk.Client;
 import org.example.sdk.account.AccountBalance;
@@ -11,7 +17,7 @@ import java.util.Objects;
 
 public class AccountBalanceQuery extends Query {
   private AccountId accountId;
-  // todo for contract id
+  // TODO: add contractId
 
   public AccountBalanceQuery() {}
 
@@ -26,15 +32,22 @@ public class AccountBalanceQuery extends Query {
   }
 
   @Override
-  protected ResponseHeader getResponseHeader(@NonNull Response response) {
+  protected ResponseHeader getResponseHeader(@NonNull final Response response) {
+    Objects.requireNonNull(response, "response must not be null");
     return response.getCryptogetAccountBalance().getHeader();
   }
 
   @Override
-  public com.hedera.hashgraph.sdk.proto.Query toProto(@NonNull Client client) {
+  public com.hedera.hashgraph.sdk.proto.Query toProto(@NonNull final Client client) {
+    Objects.requireNonNull(client, "client must not be null");
+
     var query = CryptoGetAccountBalanceQuery.newBuilder()
       .setAccountID(this.accountId.toProto())
-      .setHeader(QueryHeader.newBuilder().setResponseType(ResponseType.ANSWER_ONLY).build())
+      .setHeader(
+        QueryHeader.newBuilder()
+          .setResponseType(ResponseType.ANSWER_ONLY)
+          .build()
+      )
       .build();
 
     return com.hedera.hashgraph.sdk.proto.Query.newBuilder()
@@ -49,6 +62,7 @@ public class AccountBalanceQuery extends Query {
 
   public AccountBalance query(@NonNull Client client) {
     Objects.requireNonNull(client, "client must not be null");
+
     var proto = this.performQuery(client).getCryptogetAccountBalance();
     return AccountBalance.fromProto(proto);
   }

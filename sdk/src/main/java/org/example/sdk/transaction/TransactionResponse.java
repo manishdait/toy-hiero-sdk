@@ -1,8 +1,7 @@
 package org.example.sdk.transaction;
 
 import com.hedera.hashgraph.sdk.proto.*;
-import io.grpc.CallOptions;
-import io.grpc.stub.ClientCalls;
+
 import org.example.sdk.Client;
 import org.example.sdk.Status;
 import org.example.sdk.query.TransactionReceiptQuery;
