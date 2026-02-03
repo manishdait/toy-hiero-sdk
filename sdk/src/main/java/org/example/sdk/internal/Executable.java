@@ -7,8 +7,8 @@ import org.example.sdk.Client;
 import org.example.sdk.internal.utils.ExecutionState;
 import org.jspecify.annotations.NonNull;
 
-public abstract class Executor <ProtoRequest, ProtoResponse> {
-  private  final int MAX_ATTEMPTS = 10;
+public abstract class Executable <ProtoRequest, ProtoResponse> {
+  private final int MAX_ATTEMPTS = 10;
 
   protected abstract MethodDescriptor<ProtoRequest, ProtoResponse> getMethodDescriptor();
 

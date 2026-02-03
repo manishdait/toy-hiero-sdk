@@ -22,7 +22,7 @@ import org.example.sdk.Client;
 import org.example.sdk.Hbar;
 import org.example.sdk.HbarUnit;
 import org.example.sdk.Status;
-import org.example.sdk.internal.Executor;
+import org.example.sdk.internal.Executable;
 import org.example.sdk.internal.utils.ExecutionState;
 import org.jspecify.annotations.NonNull;
 
@@ -30,7 +30,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class Query extends Executor<com.hedera.hashgraph.sdk.proto.Query, Response> {
+public abstract class Query extends Executable<com.hedera.hashgraph.sdk.proto.Query, Response> {
   protected QueryHeader queryHeader;
   protected Hbar cost = Hbar.of(0);
 

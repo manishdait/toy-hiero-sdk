@@ -11,7 +11,7 @@ import io.grpc.MethodDescriptor;
 import io.grpc.stub.ClientCalls;
 import org.example.sdk.Client;
 import org.example.sdk.Status;
-import org.example.sdk.internal.Executor;
+import org.example.sdk.internal.Executable;
 import org.example.sdk.internal.utils.ExecutionState;
 import org.example.sdk.key.KeyType;
 import org.example.sdk.key.PrivateKey;
@@ -25,7 +25,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class PackedTransaction<T extends Transaction<T>> extends
-  Executor<com.hedera.hashgraph.sdk.proto.Transaction, TransactionResponse> {
+  Executable<com.hedera.hashgraph.sdk.proto.Transaction, TransactionResponse> {
   private final TransactionBody transactionBody;
   private final Function<TransactionBody, T> unpacker;
   private final MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction, TransactionResponse> methodDescriptor;
