@@ -5,6 +5,8 @@ import io.grpc.ManagedChannelBuilder;
 import org.example.sdk.account.AccountId;
 import org.jspecify.annotations.NonNull;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Objects;
 
 public class Node {
@@ -35,6 +37,14 @@ public class Node {
     return this.accountId;
   }
 
+  public int getPort() {
+    return port;
+  }
+
+  public String getAddress() {
+    return address;
+  }
+
   public String getNodeAddress() {
     return "%s:%d".formatted(this.address, this.port);
   }
@@ -53,5 +63,13 @@ public class Node {
       ", accountId=" + accountId +
       ", channel=" + channel +
       ']';
+  }
+
+  protected static String resolveAddressFromBytes(byte[] bytes) {
+    try {
+      return InetAddress.getByAddress(bytes).getHostAddress();
+    } catch (UnknownHostException e) {
+      throw new RuntimeException("Unable to resolve ip address");
+    }
   }
 }

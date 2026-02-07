@@ -1,31 +1,16 @@
 package org.example.sdk.query;
 
-import com.hedera.hashgraph.sdk.proto.QueryHeader;
-import com.hedera.hashgraph.sdk.proto.Transaction;
 import com.hedera.hashgraph.sdk.proto.CryptoGetInfoQuery;
-import com.hedera.hashgraph.sdk.proto.ResponseType;
-import com.hedera.hashgraph.sdk.proto.CryptoTransferTransactionBody;
-import com.hedera.hashgraph.sdk.proto.TransferList;
-import com.hedera.hashgraph.sdk.proto.AccountAmount;
-import com.hedera.hashgraph.sdk.proto.TransactionBody;
-import com.hedera.hashgraph.sdk.proto.TransactionID;
-import com.hedera.hashgraph.sdk.proto.Timestamp;
-import com.hedera.hashgraph.sdk.proto.Duration;
-import com.hedera.hashgraph.sdk.proto.SignedTransaction;
-import com.hedera.hashgraph.sdk.proto.SignatureMap;
-import com.hedera.hashgraph.sdk.proto.SignaturePair;
 import com.hedera.hashgraph.sdk.proto.CryptoServiceGrpc;
 import com.hedera.hashgraph.sdk.proto.Response;
 import com.hedera.hashgraph.sdk.proto.ResponseHeader;
 
-import com.google.protobuf.ByteString;
 import io.grpc.MethodDescriptor;
 import org.example.sdk.Client;
 import org.example.sdk.account.AccountId;
 import org.example.sdk.account.AccountInfo;
 import org.jspecify.annotations.NonNull;
 
-import java.time.Instant;
 import java.util.Objects;
 
 public class AccountInfoQuery extends Query {

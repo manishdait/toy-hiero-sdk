@@ -5,14 +5,11 @@ import com.hedera.hashgraph.sdk.proto.SignatureMap;
 import com.hedera.hashgraph.sdk.proto.SignaturePair;
 import com.hedera.hashgraph.sdk.proto.TransactionBody;
 import com.hedera.hashgraph.sdk.proto.TransactionResponse;
-import io.grpc.CallOptions;
-import io.grpc.ManagedChannel;
 import io.grpc.MethodDescriptor;
-import io.grpc.stub.ClientCalls;
 import org.example.sdk.Client;
 import org.example.sdk.Status;
 import org.example.sdk.internal.Executable;
-import org.example.sdk.internal.utils.ExecutionState;
+import org.example.sdk.internal.ExecutionState;
 import org.example.sdk.key.KeyType;
 import org.example.sdk.key.PrivateKey;
 import org.example.sdk.key.PublicKey;
@@ -22,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class PackedTransaction<T extends Transaction<T>> extends
   Executable<com.hedera.hashgraph.sdk.proto.Transaction, TransactionResponse> {

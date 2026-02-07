@@ -22,10 +22,11 @@ public class Client {
   private Client(@NonNull final Network network) {
     Objects.requireNonNull(network, "network must not be null");
     this.network = network;
-
     this.mirrorChannel = ManagedChannelBuilder
       .forTarget(Config.MIRROR_NODE_ADDRESS.get(network.getNetworkType()))
       .build();
+
+    this.network.setNodes(this);
   };
 
   public @NonNull static Client forTestnet() {

@@ -1,4 +1,4 @@
-package org.example.sdk.internal.utils;
+package org.example.sdk.internal;
 
 public enum ExecutionState {
   FINISH,
