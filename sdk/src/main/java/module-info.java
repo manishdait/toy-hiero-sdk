@@ -8,6 +8,7 @@ module io.github.manishdait.sdk {
   requires java.net.http;
   requires com.fasterxml.jackson.core;
   requires com.fasterxml.jackson.databind;
+  requires org.checkerframework.checker.qual;
 
   exports io.github.manishdait.sdk;
   exports io.github.manishdait.sdk.key;

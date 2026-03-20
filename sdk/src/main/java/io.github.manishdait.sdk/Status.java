@@ -1,10 +1,17 @@
 package io.github.manishdait.sdk;
 
 import com.hedera.hashgraph.sdk.proto.ResponseCodeEnum;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Objects;
 
+/**
+ * Enum representing ResponseCode.
+ */
 public enum Status {
+  /**
+   * The transaction passed the precheck validations.
+   */
   OK(ResponseCodeEnum.OK),
 
   /**
@@ -444,6 +451,16 @@ public enum Status {
    * Attempt to set negative initial balance
    */
   INVALID_INITIAL_BALANCE(ResponseCodeEnum.INVALID_INITIAL_BALANCE),
+
+  /**
+   * Attempt to set negative receive record threshold
+   */
+  INVALID_RECEIVE_RECORD_THRESHOLD(ResponseCodeEnum.INVALID_RECEIVE_RECORD_THRESHOLD),
+
+  /**
+   * Attempt to set negative send record threshold
+   */
+  INVALID_SEND_RECORD_THRESHOLD(ResponseCodeEnum.INVALID_SEND_RECORD_THRESHOLD),
 
   /**
    * Special Account Operations should be performed by only Genesis account, return this code if it
@@ -956,6 +973,11 @@ public enum Status {
   FRACTION_DIVIDES_BY_ZERO(ResponseCodeEnum.FRACTION_DIVIDES_BY_ZERO),
 
   /**
+   * The transaction payer could not afford a custom fee
+   */
+  INSUFFICIENT_PAYER_BALANCE_FOR_CUSTOM_FEE(ResponseCodeEnum.INSUFFICIENT_PAYER_BALANCE_FOR_CUSTOM_FEE),
+
+  /**
    * More than 10 custom fees were specified
    */
   CUSTOM_FEES_LIST_TOO_LONG(ResponseCodeEnum.CUSTOM_FEES_LIST_TOO_LONG),
@@ -1233,6 +1255,11 @@ public enum Status {
   UNEXPECTED_TOKEN_DECIMALS(ResponseCodeEnum.UNEXPECTED_TOKEN_DECIMALS),
 
   /**
+   * The proxy account id is invalid or does not exist.
+   */
+  INVALID_PROXY_ACCOUNT_ID(ResponseCodeEnum.INVALID_PROXY_ACCOUNT_ID),
+
+  /**
    * The transfer account id in CryptoDelete transaction is invalid or does not exist.
    */
   INVALID_TRANSFER_ACCOUNT_ID(ResponseCodeEnum.INVALID_TRANSFER_ACCOUNT_ID),
@@ -1265,6 +1292,11 @@ public enum Status {
   NEGATIVE_ALLOWANCE_AMOUNT(ResponseCodeEnum.NEGATIVE_ALLOWANCE_AMOUNT),
 
   /**
+   * The approveForAll flag cannot be set for a fungible token.
+   */
+  CANNOT_APPROVE_FOR_ALL_FUNGIBLE_COMMON(ResponseCodeEnum.CANNOT_APPROVE_FOR_ALL_FUNGIBLE_COMMON),
+
+  /**
    * The spender does not have an existing approved allowance with the hbar/token owner.
    */
   SPENDER_DOES_NOT_HAVE_ALLOWANCE(ResponseCodeEnum.SPENDER_DOES_NOT_HAVE_ALLOWANCE),
@@ -1286,6 +1318,17 @@ public enum Status {
   EMPTY_ALLOWANCES(ResponseCodeEnum.EMPTY_ALLOWANCES),
 
   /**
+   * Spender is repeated more than once in Crypto or Token or NFT allowance lists in a single
+   * CryptoApproveAllowance transaction.
+   */
+  SPENDER_ACCOUNT_REPEATED_IN_ALLOWANCES(ResponseCodeEnum.SPENDER_ACCOUNT_REPEATED_IN_ALLOWANCES),
+
+  /**
+   * Serial numbers are repeated in nft allowance for a single spender account
+   */
+  REPEATED_SERIAL_NUMS_IN_NFT_ALLOWANCES(ResponseCodeEnum.REPEATED_SERIAL_NUMS_IN_NFT_ALLOWANCES),
+
+  /**
    * Fungible common token used in NFT allowances
    */
   FUNGIBLE_TOKEN_IN_NFT_ALLOWANCES(ResponseCodeEnum.FUNGIBLE_TOKEN_IN_NFT_ALLOWANCES),
@@ -1304,6 +1347,11 @@ public enum Status {
    * The account id specified as the spender is invalid or does not exist.
    */
   INVALID_ALLOWANCE_SPENDER_ID(ResponseCodeEnum.INVALID_ALLOWANCE_SPENDER_ID),
+
+  /**
+   * [Deprecated] If the CryptoDeleteAllowance transaction has repeated crypto or token or Nft allowances to delete.
+   */
+  REPEATED_ALLOWANCES_TO_DELETE(ResponseCodeEnum.REPEATED_ALLOWANCES_TO_DELETE),
 
   /**
    * If the account Id specified as the delegating spender is invalid or does not exist.
@@ -1861,11 +1909,20 @@ public enum Status {
 
   private final ResponseCodeEnum code;
 
-  Status(ResponseCodeEnum code) {
+  Status(@NonNull final ResponseCodeEnum code) {
+    Objects.requireNonNull(code, "code must not be null");
     this.code = code;
   }
 
-  public static Status valueOf(ResponseCodeEnum code) {
+  /**
+   * Get the {@code Status} for {@link ResponseCodeEnum}.
+   *
+   * @param code the response code of the transaction or query
+   * @return the {@code Status} for the {@link ResponseCodeEnum}
+   */
+  public static Status valueOf(@NonNull final ResponseCodeEnum code) {
+    Objects.requireNonNull(code, "code must not be null");
+
     return switch (code) {
       case OK -> OK;
       case INVALID_TRANSACTION -> INVALID_TRANSACTION;
@@ -1953,6 +2010,8 @@ public enum Status {
       case CONTRACT_FILE_EMPTY -> CONTRACT_FILE_EMPTY;
       case CONTRACT_BYTECODE_EMPTY -> CONTRACT_BYTECODE_EMPTY;
       case INVALID_INITIAL_BALANCE -> INVALID_INITIAL_BALANCE;
+      case INVALID_RECEIVE_RECORD_THRESHOLD ->  INVALID_RECEIVE_RECORD_THRESHOLD;
+      case INVALID_SEND_RECORD_THRESHOLD -> INVALID_SEND_RECORD_THRESHOLD;
       case ACCOUNT_IS_NOT_GENESIS_ACCOUNT -> ACCOUNT_IS_NOT_GENESIS_ACCOUNT;
       case PAYER_ACCOUNT_UNAUTHORIZED -> PAYER_ACCOUNT_UNAUTHORIZED;
       case INVALID_FREEZE_TRANSACTION_BODY -> INVALID_FREEZE_TRANSACTION_BODY;
@@ -2054,6 +2113,7 @@ public enum Status {
       case BATCH_SIZE_LIMIT_EXCEEDED -> BATCH_SIZE_LIMIT_EXCEEDED;
       case INVALID_QUERY_RANGE -> INVALID_QUERY_RANGE;
       case FRACTION_DIVIDES_BY_ZERO -> FRACTION_DIVIDES_BY_ZERO;
+      case INSUFFICIENT_PAYER_BALANCE_FOR_CUSTOM_FEE -> INSUFFICIENT_PAYER_BALANCE_FOR_CUSTOM_FEE;
       case CUSTOM_FEES_LIST_TOO_LONG -> CUSTOM_FEES_LIST_TOO_LONG;
       case INVALID_CUSTOM_FEE_COLLECTOR -> INVALID_CUSTOM_FEE_COLLECTOR;
       case INVALID_TOKEN_ID_IN_CUSTOM_FEES -> INVALID_TOKEN_ID_IN_CUSTOM_FEES;
@@ -2106,20 +2166,25 @@ public enum Status {
       case MAX_STORAGE_IN_PRICE_REGIME_HAS_BEEN_USED -> MAX_STORAGE_IN_PRICE_REGIME_HAS_BEEN_USED;
       case INVALID_ALIAS_KEY -> INVALID_ALIAS_KEY;
       case UNEXPECTED_TOKEN_DECIMALS -> UNEXPECTED_TOKEN_DECIMALS;
+      case INVALID_PROXY_ACCOUNT_ID -> INVALID_PROXY_ACCOUNT_ID;
       case INVALID_TRANSFER_ACCOUNT_ID -> INVALID_TRANSFER_ACCOUNT_ID;
       case INVALID_FEE_COLLECTOR_ACCOUNT_ID -> INVALID_FEE_COLLECTOR_ACCOUNT_ID;
       case ALIAS_IS_IMMUTABLE -> ALIAS_IS_IMMUTABLE;
       case SPENDER_ACCOUNT_SAME_AS_OWNER -> SPENDER_ACCOUNT_SAME_AS_OWNER;
       case AMOUNT_EXCEEDS_TOKEN_MAX_SUPPLY -> AMOUNT_EXCEEDS_TOKEN_MAX_SUPPLY;
       case NEGATIVE_ALLOWANCE_AMOUNT -> NEGATIVE_ALLOWANCE_AMOUNT;
+      case CANNOT_APPROVE_FOR_ALL_FUNGIBLE_COMMON -> CANNOT_APPROVE_FOR_ALL_FUNGIBLE_COMMON;
       case SPENDER_DOES_NOT_HAVE_ALLOWANCE -> SPENDER_DOES_NOT_HAVE_ALLOWANCE;
       case AMOUNT_EXCEEDS_ALLOWANCE -> AMOUNT_EXCEEDS_ALLOWANCE;
       case MAX_ALLOWANCES_EXCEEDED -> MAX_ALLOWANCES_EXCEEDED;
       case EMPTY_ALLOWANCES -> EMPTY_ALLOWANCES;
+      case SPENDER_ACCOUNT_REPEATED_IN_ALLOWANCES -> SPENDER_ACCOUNT_REPEATED_IN_ALLOWANCES;
+      case REPEATED_SERIAL_NUMS_IN_NFT_ALLOWANCES -> REPEATED_SERIAL_NUMS_IN_NFT_ALLOWANCES;
       case FUNGIBLE_TOKEN_IN_NFT_ALLOWANCES -> FUNGIBLE_TOKEN_IN_NFT_ALLOWANCES;
       case NFT_IN_FUNGIBLE_TOKEN_ALLOWANCES -> NFT_IN_FUNGIBLE_TOKEN_ALLOWANCES;
       case INVALID_ALLOWANCE_OWNER_ID -> INVALID_ALLOWANCE_OWNER_ID;
       case INVALID_ALLOWANCE_SPENDER_ID -> INVALID_ALLOWANCE_SPENDER_ID;
+      case REPEATED_ALLOWANCES_TO_DELETE -> REPEATED_ALLOWANCES_TO_DELETE;
       case INVALID_DELEGATING_SPENDER -> INVALID_DELEGATING_SPENDER;
       case DELEGATING_SPENDER_CANNOT_GRANT_APPROVE_FOR_ALL -> DELEGATING_SPENDER_CANNOT_GRANT_APPROVE_FOR_ALL;
       case DELEGATING_SPENDER_DOES_NOT_HAVE_APPROVE_FOR_ALL -> DELEGATING_SPENDER_DOES_NOT_HAVE_APPROVE_FOR_ALL;
@@ -2217,14 +2282,25 @@ public enum Status {
       case THROTTLE_GROUP_LCM_OVERFLOW -> THROTTLE_GROUP_LCM_OVERFLOW;
       case AIRDROP_CONTAINS_MULTIPLE_SENDERS_FOR_A_TOKEN -> AIRDROP_CONTAINS_MULTIPLE_SENDERS_FOR_A_TOKEN;
       case GRPC_WEB_PROXY_NOT_SUPPORTED -> GRPC_WEB_PROXY_NOT_SUPPORTED;
-      default -> UNAUTHORIZED;
+      case UNRECOGNIZED -> throw new IllegalArgumentException("Unrecognized status code.");
     };
   }
 
-  public static Status fromResponseCode(int code) {
+  /**
+   * Get the {@link Status} for the given response code.
+   *
+   * @param code the numeric response code defined in {@link ResponseCodeEnum}
+   * @return the matching {@link Status} enum value
+   */
+  public static Status fromResponseCode(final int code) {
     return  valueOf(Objects.requireNonNull(ResponseCodeEnum.forNumber(code)));
   }
 
+  /**
+   * Get  the numeric response code associated with this {@link Status}.
+   *
+   * @return the integer value of the underlying {@link ResponseCodeEnum}
+   */
   public int toResponseCode() {
     return code.getNumber();
   }

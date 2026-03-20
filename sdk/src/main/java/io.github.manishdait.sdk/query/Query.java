@@ -49,12 +49,12 @@ public abstract class Query extends Executable<com.hedera.hashgraph.sdk.proto.Qu
           .addAccountAmounts(
             AccountAmount.newBuilder()
               .setAccountID(client.getOperatorAccount().accountId().toProto())
-              .setAmount(-cost.tinybars())
+              .setAmount(-cost.getValueInTinybar())
           )
           .addAccountAmounts(
             AccountAmount.newBuilder()
               .setAccountID(client.getNode().getAccountId().toProto())
-              .setAmount(cost.tinybars())
+              .setAmount(cost.getValueInTinybar())
           )
           .build()
       ).build();
@@ -106,7 +106,7 @@ public abstract class Query extends Executable<com.hedera.hashgraph.sdk.proto.Qu
     var queryHeaderBuilder = QueryHeader.newBuilder()
       .setResponseType(ResponseType.ANSWER_ONLY);
 
-    if (cost.tinybars() > 0) {
+    if (cost.getValueInTinybar() > 0) {
       queryHeaderBuilder.setPayment(preparePayment(client, cost));
     }
 

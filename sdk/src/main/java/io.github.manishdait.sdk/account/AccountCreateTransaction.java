@@ -4,6 +4,8 @@ import com.hedera.hashgraph.sdk.proto.CryptoCreateTransactionBody;
 import com.hedera.hashgraph.sdk.proto.CryptoServiceGrpc;
 import com.hedera.hashgraph.sdk.proto.TransactionBody;
 import com.hedera.hashgraph.sdk.proto.TransactionResponse;
+import io.github.manishdait.sdk.Hbar;
+import io.github.manishdait.sdk.HbarUnit;
 import io.grpc.MethodDescriptor;
 import io.github.manishdait.sdk.Client;
 import io.github.manishdait.sdk.Duration;
@@ -12,9 +14,11 @@ import io.github.manishdait.sdk.key.PublicKey;
 import io.github.manishdait.sdk.transaction.Transaction;
 import org.jspecify.annotations.NonNull;
 
+import java.util.Objects;
+
 public class AccountCreateTransaction extends Transaction<AccountCreateTransaction> {
   private Key key;
-  private long initialBalance;
+  private Hbar initialBalance;
   private Duration autoRenewPeriod;
   private String accountMemo;
   private int maxAutomaticTokenAssociations;
@@ -24,14 +28,27 @@ public class AccountCreateTransaction extends Transaction<AccountCreateTransacti
     this.accountMemo = "";
   }
 
+  public Key getKey() {
+    return key;
+  }
+
   public AccountCreateTransaction withKey(Key key) {
     this.key = key;
     return this;
   }
 
-  public AccountCreateTransaction withInitialBalance(long initialBalance) {
+  public Hbar getInitialBalance() {
+    return initialBalance;
+  }
+
+  public AccountCreateTransaction withInitialBalance(@NonNull Hbar initialBalance) {
+    Objects.requireNonNull(initialBalance, "initialBalance must not be null");
     this.initialBalance = initialBalance;
     return this;
+  }
+
+  public AccountCreateTransaction withInitialBalance(long initialBalance) {
+    return withInitialBalance(Hbar.of(initialBalance, HbarUnit.TINYBAR));
   }
 
   public AccountCreateTransaction withAutoRenewPeriod(Duration autoRenewPeriod) {
@@ -39,13 +56,12 @@ public class AccountCreateTransaction extends Transaction<AccountCreateTransacti
     return this;
   }
 
-  public AccountCreateTransaction withAutoRenewPeriod(long autoRenewPeriod) {
-    return this.withAutoRenewPeriod(Duration.of(autoRenewPeriod));
+  public Duration getAutoRenewPeriod() {
+    return autoRenewPeriod;
   }
 
-  public AccountCreateTransaction withAccountMemo(String memo) {
-    this.accountMemo = memo;
-    return this;
+  public AccountCreateTransaction withAutoRenewPeriod(long autoRenewPeriod) {
+    return this.withAutoRenewPeriod(Duration.of(autoRenewPeriod));
   }
 
   public AccountCreateTransaction withMaxAutomaticTokenAssociation(int maxAutomaticTokenAssociations) {
@@ -53,11 +69,21 @@ public class AccountCreateTransaction extends Transaction<AccountCreateTransacti
     return this;
   }
 
+  public String getAccountMemo() {
+    return accountMemo;
+  }
+
+  public AccountCreateTransaction withAccountMemo(String memo) {
+    this.accountMemo = memo;
+    return this;
+  }
+
+
   private CryptoCreateTransactionBody toProto() {
     return CryptoCreateTransactionBody.newBuilder()
       .setKey(key.toProto())
       .setMemo(this.accountMemo)
-      .setInitialBalance(this.initialBalance)
+      .setInitialBalance(this.initialBalance.getValueInTinybar())
       .setAutoRenewPeriod(this.autoRenewPeriod.toProto())
       .setMaxAutomaticTokenAssociations(this.maxAutomaticTokenAssociations)
       .build();
@@ -69,7 +95,7 @@ public class AccountCreateTransaction extends Transaction<AccountCreateTransacti
 
     return new AccountCreateTransaction()
       .withAccountMemo(proto.getMemo())
-      .withInitialBalance(proto.getInitialBalance())
+      .withInitialBalance(Hbar.of(proto.getInitialBalance(), HbarUnit.TINYBAR))
       .withAutoRenewPeriod(Duration.fromProto(proto.getAutoRenewPeriod()))
       .withKey(PublicKey.fromProto(proto.getKey()))
       .withMaxAutomaticTokenAssociation(proto.getMaxAutomaticTokenAssociations());

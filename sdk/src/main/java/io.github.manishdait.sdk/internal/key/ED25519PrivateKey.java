@@ -22,28 +22,43 @@ public final class ED25519PrivateKey implements PrivateKey {
   private static final ASN1ObjectIdentifier ED25519_OID = new ASN1ObjectIdentifier("1.3.101.112");
   private final byte[] seed;
 
+  /**
+   * Constructor.
+   * @param seed the bytes for the ED25519PrivateKey
+   */
   private ED25519PrivateKey(final byte[] seed) {
     this.seed = seed.clone();
   }
 
+  /**
+   * Generate a new {@code ED25519PrivateKey}.
+   *
+   * @return the new instance of {@code ED25519PrivateKey}
+   */
   public static @NonNull ED25519PrivateKey generate() {
     byte[] seed = new byte[Ed25519.SECRET_KEY_SIZE];
     Ed25519.generatePrivateKey(new SecureRandom(), seed);
     return new ED25519PrivateKey(seed);
   }
 
+  /**
+   * Create a {@code ED25519PrivateKey} from given bytes.
+   *
+   * @param bytes the bytes from key is to be derived
+   * @return the new instance of {@code ED25519PrivateKey}
+   */
   public static @NonNull ED25519PrivateKey fromBytes(byte[] bytes) {
     if (bytes.length == Ed25519.SECRET_KEY_SIZE) {
       return new ED25519PrivateKey(bytes);
     }
 
     try {
-      final var pki = PrivateKeyInfo.getInstance(bytes);
+      final PrivateKeyInfo pki = PrivateKeyInfo.getInstance(bytes);
       if (!pki.getPrivateKeyAlgorithm().getAlgorithm().equals(ED25519_OID)) {
         throw new RuntimeException("Not an Ed25519 private key");
       }
 
-      var seed = ((DEROctetString) pki.parsePrivateKey()).getOctets();
+      byte[] seed = ((DEROctetString) pki.parsePrivateKey()).getOctets();
       if (seed.length != Ed25519.SECRET_KEY_SIZE) {
         throw new RuntimeException("Invalid Ed25519 seed length");
       }
@@ -53,6 +68,12 @@ public final class ED25519PrivateKey implements PrivateKey {
     }
   }
 
+  /**
+   * Create a {@code ED25519PrivateKey} from given string.
+   *
+   * @param str the string from which the key is to derived
+   * @return the new instance of  {@code ED25519PrivateKey}
+   */
   public static @NonNull ED25519PrivateKey fromString(@NonNull final String str) {
     Objects.requireNonNull(str, "key must not be null");
     return fromBytes(Hex.decode(str.replaceFirst("^0x", "")));
@@ -77,7 +98,7 @@ public final class ED25519PrivateKey implements PrivateKey {
       throw new RuntimeException("Invalid Ed25519 private key seed length");
     }
 
-    final var signature = new byte[Ed25519.SIGNATURE_SIZE];
+    final byte[] signature = new byte[Ed25519.SIGNATURE_SIZE];
     Ed25519.sign(seed, 0, message, 0, message.length, signature, 0);
     return  signature;
   }
@@ -95,8 +116,8 @@ public final class ED25519PrivateKey implements PrivateKey {
   @Override
   public byte[] getDERBytes() {
     try {
-      final var alg = new AlgorithmIdentifier(ED25519_OID);
-      final var pki = new PrivateKeyInfo(alg, new DEROctetString(this.getBytes()));
+      final AlgorithmIdentifier alg = new AlgorithmIdentifier(ED25519_OID);
+      final PrivateKeyInfo pki = new PrivateKeyInfo(alg, new DEROctetString(this.getBytes()));
 
       return pki.getEncoded();
     } catch (Exception e) {

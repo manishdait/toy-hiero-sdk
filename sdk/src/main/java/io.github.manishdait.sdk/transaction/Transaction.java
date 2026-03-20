@@ -55,7 +55,7 @@ public abstract class Transaction <T extends Transaction<T>> {
       .setTransactionValidDuration(this.validDuration.toProto())
       .setMemo(this.memo == null ? "" : memo)
       .setNodeAccountID(client.getNode().getAccountId().toProto())
-      .setTransactionFee(MAX_TRANSACTION_FEE.tinybars());
+      .setTransactionFee(MAX_TRANSACTION_FEE.getValueInTinybar());
   }
 
   public PackedTransaction<T> pack(@NonNull final Client client) {

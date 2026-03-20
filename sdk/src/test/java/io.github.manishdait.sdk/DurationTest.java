@@ -1,38 +1,52 @@
 package io.github.manishdait.sdk;
 
-import org.assertj.core.api.Assertions;
-import io.github.manishdait.sdk.Duration;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class DurationTest {
   @Test
-  @DisplayName("Should create duration for given seconds")
   void shouldCreateDuration() {
-    final Duration duration = Duration.of(120);
-    Assertions.assertThat(duration).isNotNull();
-    Assertions.assertThat(duration.getSeconds()).isEqualTo(120);
+    var duration = Duration.of(120);
+    assertThat(duration).isNotNull();
+    assertThat(duration.getSeconds()).isEqualTo(120);
   }
 
   @Test
-  @DisplayName("Should create duration from proto")
   void shouldCreateDurationFromProto() {
-    final com.hedera.hashgraph.sdk.proto.Duration proto = com.hedera.hashgraph.sdk.proto.Duration.newBuilder()
+    var proto = com.hedera.hashgraph.sdk.proto.Duration.newBuilder()
       .setSeconds(120)
       .build();
-    final Duration duration = Duration.fromProto(proto);
+    var duration = Duration.fromProto(proto);
 
-    Assertions.assertThat(duration).isNotNull();
-    Assertions.assertThat(duration.getSeconds()).isEqualTo(120);
+    assertThat(duration).isNotNull();
+    assertThat(duration.getSeconds()).isEqualTo(120);
   }
 
   @Test
-  @DisplayName("Should Convert duration to proto")
   void shouldConvertDurationToProto() {
-    final Duration duration = Duration.of(120);
-    final com.hedera.hashgraph.sdk.proto.Duration proto = duration.toProto();
+    var duration = Duration.of(120);
+    var proto = duration.toProto();
 
-    Assertions.assertThat(proto).isNotNull();
-    Assertions.assertThat(proto.getSeconds()).isEqualTo(120);
+    assertThat(proto).isNotNull();
+    assertThat(proto.getSeconds()).isEqualTo(120);
+  }
+
+  @Test
+  void shouldReturnTrueAndSameHashCodeWhenTwoDurationAreSame() {
+    var duration1 = Duration.of(1);
+    var duration2 = Duration.of(1);
+
+    assertThat(duration1.equals(duration2)).isTrue();
+    assertThat(duration1.hashCode()).isEqualTo(duration2.hashCode());
+  }
+
+  @Test
+  void shouldReturnFalseAndDiffHashCodeWhenTwoDurationAreNotSame() {
+    var duration1 = Duration.of(1);
+    var duration2 = Duration.of(2);
+
+    assertThat(duration1.equals(duration2)).isFalse();
+    assertThat(duration1.hashCode()).isNotEqualTo(duration2.hashCode());
   }
 }

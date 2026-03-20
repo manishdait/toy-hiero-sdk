@@ -6,6 +6,7 @@ import org.bouncycastle.asn1.sec.SECObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
+import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.math.ec.ECPoint;
@@ -20,33 +21,27 @@ import java.util.Objects;
 
 /**
  * Represent an ECDSA public key using the secp256k1 curve.
- *
- * <p>
- *  30 2d                       2-bytes  Top-Level           (SEQUENCE LENGTH)
- *  30 07                       2-bytes  AlgorithmIdentifie  (SEQUENCE LENGTH)
- *  06 05 2b 81 04 00 0a        7-bytes  OID                 (ObjectIdentifier LENGTH 1×40+3→1.3 8104→132 00→0 0a→10) secp256k1
- *  03 22                       2-bytes  BitString PubKey    (BIT-STRING LENGTH)
- *  00                          1-bytes  Unused bits byte    (UNUSED-BITS)
- *  02 NEXT-32-BYTES            33-bytes EC public key point (compressed-EC-point  X-coordinate)
- * </p>
- *
- * <p>
- *  SEQUENCE tag + length	2
- *  AlgorithmIdentifier	9
- *  BIT STRING	36
- *  Total DER size	47 bytes
- * </p>
  */
 public class ECDSAPublicKey implements PublicKey {
   private final byte[] bytes;
 
-  private ECDSAPublicKey(byte[] bytes) {
+  /**
+   * Constructor.
+   * @param bytes bytes for the ECDSA public key
+   */
+  private ECDSAPublicKey(final byte[] bytes) {
     this.bytes = bytes.clone();
   }
 
+  /**
+   * Create {@code ECDSAPublicKey} from given bytes.
+   *
+   * @param bytes the bytes from which the key should derive
+   * @return the new instance of {@code ECDSAPublicKey}
+   */
   public static @NonNull ECDSAPublicKey fromBytes(final byte[] bytes) {
     ECPoint point;
-    var curve = ECDSAPrivateKey.CURVE;
+    ECDomainParameters curve = ECDSAPrivateKey.CURVE;
 
     if (bytes.length == 32) {
       throw new RuntimeException(
@@ -55,9 +50,9 @@ public class ECDSAPublicKey implements PublicKey {
     }
 
     try {
-      var spki = SubjectPublicKeyInfo.getInstance(bytes);
-      var pointBytes = spki.getPublicKeyData().getBytes();
-      var p = curve.getCurve().decodePoint(pointBytes);
+      SubjectPublicKeyInfo spki = SubjectPublicKeyInfo.getInstance(bytes);
+      byte[] pointBytes = spki.getPublicKeyData().getBytes();
+      ECPoint p = curve.getCurve().decodePoint(pointBytes);
       return new ECDSAPublicKey(p.getEncoded(true));
     } catch (Exception e) {
       // fallback
@@ -79,6 +74,12 @@ public class ECDSAPublicKey implements PublicKey {
     return new ECDSAPublicKey(point.getEncoded(true));
   }
 
+  /**
+   * Create {@code ECDSAPublicKey} from given string.
+   *
+   * @param str the string from which the key should derive
+   * @return the new instance of {@code ECDSAPublicKey}
+   */
   public static @NonNull ECDSAPublicKey fromString(final @NonNull String str) {
     Objects.requireNonNull(str, "str must not be null");
     return fromBytes(Hex.decode(str.replaceFirst("^0x", "")));
@@ -99,7 +100,7 @@ public class ECDSAPublicKey implements PublicKey {
   @Override
   public byte[] getDERBytes() {
     try {
-      var spki = new SubjectPublicKeyInfo(
+      SubjectPublicKeyInfo spki = new SubjectPublicKeyInfo(
         new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey, SECObjectIdentifiers.secp256k1),
         this.bytes
       );
@@ -126,26 +127,26 @@ public class ECDSAPublicKey implements PublicKey {
   }
 
   @Override
-  public boolean verify(byte[] message, byte[] signature) {
+  public boolean verify(final byte[] message, final byte[] signature) {
     if (signature.length != 64) {
       return false;
     }
 
     byte[] hash = Keccak256Utils.keccak256(message);
 
-    var r = new BigInteger(1, Arrays.copyOfRange(signature, 0, 32));
-    var s = new BigInteger(1, Arrays.copyOfRange(signature, 32, 64));
+    BigInteger r = new BigInteger(1, Arrays.copyOfRange(signature, 0, 32));
+    BigInteger s = new BigInteger(1, Arrays.copyOfRange(signature, 32, 64));
 
-    var n = ECDSAPrivateKey.CURVE.getN();
+    BigInteger n = ECDSAPrivateKey.CURVE.getN();
     if (r.signum() <= 0 || r.compareTo(n) >= 0) return false;
     if (s.signum() <= 0 || s.compareTo(n) >= 0) return false;
 
-    var q = ECDSAPrivateKey.CURVE
+    ECPoint q = ECDSAPrivateKey.CURVE
       .getCurve()
       .decodePoint(this.bytes)
       .normalize();
 
-    var signer = new ECDSASigner();
+    ECDSASigner signer = new ECDSASigner();
     var pub = new ECPublicKeyParameters(q, ECDSAPrivateKey.CURVE);
 
     signer.init(false, pub);

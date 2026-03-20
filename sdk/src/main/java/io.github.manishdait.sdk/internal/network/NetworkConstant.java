@@ -6,7 +6,7 @@ import io.github.manishdait.sdk.network.Node;
 import java.util.List;
 import java.util.Map;
 
-public class NetworkConstant {
+public final class NetworkConstant {
   public static final Map<NetworkType, List<Node>> DEFAULT_NODES = Map.of(
     NetworkType.MAINNET, List.of(
       new Node("35.237.200.180:50211", "0.0.3"),

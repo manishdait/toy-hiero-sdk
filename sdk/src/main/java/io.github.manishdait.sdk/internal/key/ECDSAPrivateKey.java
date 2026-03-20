@@ -1,17 +1,20 @@
 package io.github.manishdait.sdk.internal.key;
 
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.sec.ECPrivateKey;
 import org.bouncycastle.asn1.sec.SECNamedCurves;
 import org.bouncycastle.asn1.sec.SECObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
+import org.bouncycastle.math.ec.ECPoint;
 import org.bouncycastle.util.encoders.Hex;
 import io.github.manishdait.sdk.key.KeyType;
 import io.github.manishdait.sdk.key.PrivateKey;
@@ -35,8 +38,7 @@ public final class ECDSAPrivateKey implements PrivateKey {
   private final byte[] scalar;
 
   static {
-    // Load the curve parameters
-    var params = SECNamedCurves.getByName("secp256k1");
+    final X9ECParameters params = SECNamedCurves.getByName("secp256k1");
     CURVE = new ECDomainParameters(
       params.getCurve(),
       params.getG(),
@@ -45,13 +47,21 @@ public final class ECDSAPrivateKey implements PrivateKey {
     );
   }
 
+  /**
+   * Constructor.
+   * @param scalar bytes for the ECDSA private key
+   */
   private ECDSAPrivateKey(final byte[] scalar) {
     this.scalar = scalar.clone();
   }
 
+  /**
+   * Generate a {@code ECDSAPrivateKey}.
+   * @return the new instance {@code ECDSAPrivateKey}
+   */
   public static @NonNull ECDSAPrivateKey generate() {
-    final var random = new SecureRandom();
-    final var n = CURVE.getN();
+    final SecureRandom random = new SecureRandom();
+    final BigInteger n = CURVE.getN();
 
     BigInteger d;
     do {
@@ -63,13 +73,19 @@ public final class ECDSAPrivateKey implements PrivateKey {
     return new ECDSAPrivateKey(toFixed(d));
   }
 
+  /**
+   * Create an {@code ECDSAPrivateKey} from bytes.
+   *
+   * @param bytes the bytes from which to generate key
+   * @return the new instance of {@code ECDSAPrivateKey}
+   */
   public static @NonNull ECDSAPrivateKey fromBytes(final byte[] bytes) {
     if (bytes.length == SCALAR_SIZE) {
       return fromScalar(bytes);
     }
 
     if (hasPrefix(bytes)) {
-      var scalar = Arrays.copyOfRange(
+      byte[] scalar = Arrays.copyOfRange(
         bytes,
         LEGACY_PREFIX_BYTES.length,
         bytes.length
@@ -78,24 +94,24 @@ public final class ECDSAPrivateKey implements PrivateKey {
     }
 
     try {
-      var pki = PrivateKeyInfo.getInstance(bytes);
+      PrivateKeyInfo pki = PrivateKeyInfo.getInstance(bytes);
       // ANS1Encodable
-      var key = pki.parsePrivateKey();
+      ASN1Encodable key = pki.parsePrivateKey();
 
       // PKCS#8 wrapping SEC1
       if (key instanceof ASN1OctetString octets) {
         return fromScalar(octets.getOctets());
       }
 
-      // PKCS#8 → SEC1
-      var ec = ECPrivateKey.getInstance(key);
+      // PKCS#8 -> SEC1
+      ECPrivateKey ec = ECPrivateKey.getInstance(key);
       return fromScalar(toFixed(ec.getKey()));
     } catch (Exception e) {
       // fallback
     }
 
     try {
-      var ec = ECPrivateKey.getInstance(bytes);
+      ECPrivateKey ec = ECPrivateKey.getInstance(bytes);
       return fromScalar(toFixed(ec.getKey()));
     } catch (Exception e) {
       // fallback
@@ -104,16 +120,23 @@ public final class ECDSAPrivateKey implements PrivateKey {
     throw new RuntimeException("Invalid ECDSA private key encoding");
   }
 
-  public static @NonNull ECDSAPrivateKey fromString(final @NonNull String str) {
+  /**
+   * Create an {@code ECDSAPrivateKey} from bytes.
+   *
+   * @param str the string from which the key to be generated
+   * @return the new instance of {@code ECDSAPrivateKey}
+   */
+  public static @NonNull ECDSAPrivateKey fromString(@NonNull final String str) {
     Objects.requireNonNull(str, "str must not be null");
     return fromBytes(Hex.decode(str.replaceFirst("^0x", "")));
   }
 
+
   @Override
   public @NonNull PublicKey getPublicKey() {
-    final var d = new BigInteger(1, scalar);
+    final BigInteger d = new BigInteger(1, scalar);
     // Ec Point
-    final var q = CURVE.getG().multiply(d).normalize();
+    final ECPoint q = CURVE.getG().multiply(d).normalize();
     return ECDSAPublicKey.fromBytes(q.getEncoded(true));
   }
 
@@ -130,14 +153,14 @@ public final class ECDSAPrivateKey implements PrivateKey {
   @Override
   public byte[] getDERBytes() {
     try {
-      var ecPrivateKey = new ECPrivateKey(
+      ECPrivateKey ecPrivateKey = new ECPrivateKey(
         CURVE.getN().bitLength(),
         new BigInteger(1, scalar),
         null,
         null
       );
 
-      var pki = new PrivateKeyInfo(
+      PrivateKeyInfo pki = new PrivateKeyInfo(
         new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey, SECObjectIdentifiers.secp256k1),
         ecPrivateKey
       );
@@ -162,8 +185,8 @@ public final class ECDSAPrivateKey implements PrivateKey {
   public byte[] sign(byte[] message) {
     byte[] hash = Keccak256Utils.keccak256(message);
 
-    var signer = new ECDSASigner(new HMacDSAKCalculator(new SHA256Digest()));
-    var priv = new ECPrivateKeyParameters(new BigInteger(1, scalar), CURVE);
+    ECDSASigner signer = new ECDSASigner(new HMacDSAKCalculator(new SHA256Digest()));
+    ECPrivateKeyParameters priv = new ECPrivateKeyParameters(new BigInteger(1, scalar), CURVE);
 
     signer.init(true, priv);
     BigInteger[] sig = signer.generateSignature(hash);
