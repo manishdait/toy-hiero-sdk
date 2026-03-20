@@ -1,8 +1,8 @@
 package io.github.manishdait.sdk;
 
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+import org.junit.jupiter.api.Test;
 
 public class DurationTest {
   @Test
@@ -14,9 +14,7 @@ public class DurationTest {
 
   @Test
   void shouldCreateDurationFromProto() {
-    var proto = com.hedera.hashgraph.sdk.proto.Duration.newBuilder()
-      .setSeconds(120)
-      .build();
+    var proto = com.hedera.hashgraph.sdk.proto.Duration.newBuilder().setSeconds(120).build();
     var duration = Duration.fromProto(proto);
 
     assertThat(duration).isNotNull();

@@ -1,9 +1,9 @@
 package io.github.manishdait.sdk;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 import com.hedera.hashgraph.sdk.proto.ResponseCodeEnum;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class StatusTest {
   @Test

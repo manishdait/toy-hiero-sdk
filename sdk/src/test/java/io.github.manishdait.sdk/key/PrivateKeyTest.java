@@ -2,11 +2,11 @@ package com.example.sdk.key;
 
 import com.google.protobuf.ByteString;
 import com.hedera.hashgraph.sdk.proto.Key;
-import org.assertj.core.api.Assertions;
-import org.bouncycastle.util.encoders.Hex;
 import io.github.manishdait.sdk.key.KeyType;
 import io.github.manishdait.sdk.key.PrivateKey;
 import io.github.manishdait.sdk.key.PublicKey;
+import org.assertj.core.api.Assertions;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +33,8 @@ public class PrivateKeyTest {
   @Test
   @DisplayName("Should derive a ED25519 Private Key from der string")
   public void shouldGeneratePrivateKeyFromDerKey() {
-    final String derKey = "302e020100300506032b6570042204200101010101010101010101010101010101010101010101010101010101010101";
+    final String derKey =
+        "302e020100300506032b6570042204200101010101010101010101010101010101010101010101010101010101010101";
     final PrivateKey key = PrivateKey.fromString(derKey);
 
     Assertions.assertThat(key).isNotNull();
@@ -83,6 +84,6 @@ public class PrivateKeyTest {
 
     Assertions.assertThat(proto).isNotNull();
     Assertions.assertThat(proto.getEd25519())
-      .isEqualTo(ByteString.copyFrom(privateKey.getPublicKey().getBytes()));
+        .isEqualTo(ByteString.copyFrom(privateKey.getPublicKey().getBytes()));
   }
 }

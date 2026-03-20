@@ -6,15 +6,14 @@ import com.hedera.hashgraph.sdk.proto.CryptoServiceGrpc;
 import com.hedera.hashgraph.sdk.proto.CryptoUpdateTransactionBody;
 import com.hedera.hashgraph.sdk.proto.TransactionBody;
 import com.hedera.hashgraph.sdk.proto.TransactionResponse;
-import io.grpc.MethodDescriptor;
 import io.github.manishdait.sdk.Client;
 import io.github.manishdait.sdk.Duration;
 import io.github.manishdait.sdk.key.Key;
 import io.github.manishdait.sdk.key.PublicKey;
 import io.github.manishdait.sdk.transaction.Transaction;
-import org.jspecify.annotations.NonNull;
-
+import io.grpc.MethodDescriptor;
 import java.util.Objects;
+import org.jspecify.annotations.NonNull;
 
 public class AccountUpdateTransaction extends Transaction<AccountUpdateTransaction> {
   private AccountId accountId;
@@ -55,7 +54,8 @@ public class AccountUpdateTransaction extends Transaction<AccountUpdateTransacti
     return withAutoRenewPeriod(Duration.of(autoRenewPeriod));
   }
 
-  public AccountUpdateTransaction withMaxAutomaticTokenAssociations(int maxAutomaticTokenAssociations) {
+  public AccountUpdateTransaction withMaxAutomaticTokenAssociations(
+      int maxAutomaticTokenAssociations) {
     this.maxAutomaticTokenAssociations = maxAutomaticTokenAssociations;
     return this;
   }
@@ -77,7 +77,8 @@ public class AccountUpdateTransaction extends Transaction<AccountUpdateTransacti
     }
 
     if (this.maxAutomaticTokenAssociations != Integer.MIN_VALUE) {
-      updateProto.setMaxAutomaticTokenAssociations(Int32Value.of(this.maxAutomaticTokenAssociations));
+      updateProto.setMaxAutomaticTokenAssociations(
+          Int32Value.of(this.maxAutomaticTokenAssociations));
     }
 
     return updateProto.build();
@@ -103,7 +104,8 @@ public class AccountUpdateTransaction extends Transaction<AccountUpdateTransacti
     }
 
     if (proto.hasMaxAutomaticTokenAssociations()) {
-      transaction.withMaxAutomaticTokenAssociations(proto.getMaxAutomaticTokenAssociations().getValue());
+      transaction.withMaxAutomaticTokenAssociations(
+          proto.getMaxAutomaticTokenAssociations().getValue());
     }
 
     return transaction;
@@ -116,7 +118,8 @@ public class AccountUpdateTransaction extends Transaction<AccountUpdateTransacti
   }
 
   @Override
-  protected MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction, TransactionResponse> getMethodDescriptor() {
+  protected MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction, TransactionResponse>
+      getMethodDescriptor() {
     return CryptoServiceGrpc.getUpdateAccountMethod();
   }
 }

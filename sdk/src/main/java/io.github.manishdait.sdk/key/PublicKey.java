@@ -3,9 +3,8 @@ package io.github.manishdait.sdk.key;
 import io.github.manishdait.sdk.internal.key.ECDSAPublicKey;
 import io.github.manishdait.sdk.internal.key.ED25519PublicKey;
 import io.github.manishdait.sdk.internal.key.KeyFactory;
-import org.jspecify.annotations.NonNull;
-
 import java.util.Objects;
+import org.jspecify.annotations.NonNull;
 
 public interface PublicKey extends Key {
   static @NonNull PublicKey fromProto(com.hedera.hashgraph.sdk.proto.Key proto) {
@@ -13,7 +12,7 @@ public interface PublicKey extends Key {
       return ED25519PublicKey.fromBytes(proto.getEd25519().toByteArray());
     } else if (proto.hasECDSASecp256K1()) {
       return ECDSAPublicKey.fromBytes(proto.getECDSASecp256K1().toByteArray());
-    } else  {
+    } else {
       throw new RuntimeException("Not implemented");
     }
   }

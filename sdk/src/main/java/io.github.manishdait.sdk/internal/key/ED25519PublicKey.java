@@ -2,27 +2,25 @@ package io.github.manishdait.sdk.internal.key;
 
 import com.google.protobuf.ByteString;
 import com.hedera.hashgraph.sdk.proto.Key;
+import io.github.manishdait.sdk.key.KeyType;
+import io.github.manishdait.sdk.key.PublicKey;
+import java.util.Arrays;
+import java.util.Objects;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.math.ec.rfc8032.Ed25519;
 import org.bouncycastle.util.encoders.Hex;
-import io.github.manishdait.sdk.key.KeyType;
-import io.github.manishdait.sdk.key.PublicKey;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Arrays;
-import java.util.Objects;
-
-/**
- * Represents an Ed25519 public key.
- */
+/** Represents an Ed25519 public key. */
 public final class ED25519PublicKey implements PublicKey {
   private static final ASN1ObjectIdentifier ED25519_OID = new ASN1ObjectIdentifier("1.3.101.112");
   private final byte[] bytes;
 
   /**
    * Constructor.
+   *
    * @param bytes the bytes for the Ed25519PublicKey
    */
   private ED25519PublicKey(final byte[] bytes) {
@@ -71,9 +69,7 @@ public final class ED25519PublicKey implements PublicKey {
 
   @Override
   public Key toProto() {
-    return Key.newBuilder()
-      .setEd25519(ByteString.copyFrom(this.bytes))
-      .build();
+    return Key.newBuilder().setEd25519(ByteString.copyFrom(this.bytes)).build();
   }
 
   @Override
@@ -125,7 +121,7 @@ public final class ED25519PublicKey implements PublicKey {
   @Override
   public boolean equals(Object o) {
     if (o == this) return true;
-    if (o == null || this.getClass() !=o.getClass()) return false;
+    if (o == null || this.getClass() != o.getClass()) return false;
     return Arrays.equals(this.bytes, ((ED25519PublicKey) o).bytes);
   }
 }

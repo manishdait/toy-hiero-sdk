@@ -1,40 +1,32 @@
 package io.github.manishdait.sdk.transaction;
 
 import com.hedera.hashgraph.sdk.proto.*;
-
 import io.github.manishdait.sdk.Client;
 import io.github.manishdait.sdk.Status;
 import io.github.manishdait.sdk.query.TransactionReceiptQuery;
+import java.util.Objects;
 import org.jspecify.annotations.NonNull;
 
-import java.util.List;
-import java.util.Objects;
-
-public record TransactionResponse (
-  @NonNull Client client,
-  @NonNull TransactionId transactionId,
-  @NonNull Status nodeTransactionPrecheckCode,
-  long cost
-) {
+public record TransactionResponse(
+    @NonNull Client client,
+    @NonNull TransactionId transactionId,
+    @NonNull Status nodeTransactionPrecheckCode,
+    long cost) {
   public static TransactionResponse fromProto(
-    @NonNull final Client client,
-    @NonNull final TransactionId transactionId,
-    final com.hedera.hashgraph.sdk.proto.TransactionResponse proto
-  ) {
+      @NonNull final Client client,
+      @NonNull final TransactionId transactionId,
+      final com.hedera.hashgraph.sdk.proto.TransactionResponse proto) {
     Objects.requireNonNull(transactionId, "transactionId must not be null");
     Objects.requireNonNull(proto, "proto must not be null");
 
     return new TransactionResponse(
-      client,
-      transactionId,
-      Status.valueOf(proto.getNodeTransactionPrecheckCode()),
-      proto.getCost()
-    );
+        client,
+        transactionId,
+        Status.valueOf(proto.getNodeTransactionPrecheckCode()),
+        proto.getCost());
   }
 
   public TransactionReceipt queryReceipt() {
-    return new TransactionReceiptQuery()
-      .withTransactionId(this.transactionId)
-      .query(client);
+    return new TransactionReceiptQuery().withTransactionId(this.transactionId).query(client);
   }
 }

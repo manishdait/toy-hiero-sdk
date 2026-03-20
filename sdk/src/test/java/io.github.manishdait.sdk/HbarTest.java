@@ -1,10 +1,9 @@
 package io.github.manishdait.sdk;
 
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.math.BigDecimal;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import org.junit.jupiter.api.Test;
 
 public final class HbarTest {
   @Test
@@ -87,5 +86,4 @@ public final class HbarTest {
     assertThat(hbar1.equals(hbar2)).isFalse();
     assertThat(hbar1.hashCode()).isNotEqualTo(hbar2.hashCode());
   }
-
 }

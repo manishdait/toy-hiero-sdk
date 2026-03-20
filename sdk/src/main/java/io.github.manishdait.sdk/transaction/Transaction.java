@@ -2,19 +2,15 @@ package io.github.manishdait.sdk.transaction;
 
 import com.hedera.hashgraph.sdk.proto.TransactionBody;
 import com.hedera.hashgraph.sdk.proto.TransactionResponse;
-import io.grpc.MethodDescriptor;
 import io.github.manishdait.sdk.Client;
 import io.github.manishdait.sdk.Duration;
 import io.github.manishdait.sdk.Hbar;
+import io.grpc.MethodDescriptor;
+import java.util.Objects;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Objects;
-import java.util.function.Function;
-
-/**
- * Abstract Transaction Class
- */
-public abstract class Transaction <T extends Transaction<T>> {
+/** Abstract Transaction Class */
+public abstract class Transaction<T extends Transaction<T>> {
   private static final Hbar MAX_TRANSACTION_FEE = Hbar.of(1);
 
   protected TransactionId transactionId;
@@ -42,20 +38,25 @@ public abstract class Transaction <T extends Transaction<T>> {
   }
 
   public abstract T fromProto(final TransactionBody proto);
+
   protected abstract void buildTransaction(final Client client);
-  protected abstract MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction, TransactionResponse> getMethodDescriptor();
+
+  protected abstract MethodDescriptor<
+          com.hedera.hashgraph.sdk.proto.Transaction, TransactionResponse>
+      getMethodDescriptor();
 
   public void buildBaseTransaction(@NonNull final Client client) {
     Objects.requireNonNull(client, "client must not be null");
 
     this.transactionId = TransactionId.fromAccountId(client.getOperatorAccountId());
 
-    this.transactionBodyBuilder = TransactionBody.newBuilder()
-      .setTransactionID(this.transactionId.toProto())
-      .setTransactionValidDuration(this.validDuration.toProto())
-      .setMemo(this.memo == null ? "" : memo)
-      .setNodeAccountID(client.getNode().getAccountId().toProto())
-      .setTransactionFee(MAX_TRANSACTION_FEE.getValueInTinybar());
+    this.transactionBodyBuilder =
+        TransactionBody.newBuilder()
+            .setTransactionID(this.transactionId.toProto())
+            .setTransactionValidDuration(this.validDuration.toProto())
+            .setMemo(this.memo == null ? "" : memo)
+            .setNodeAccountID(client.getNode().getAccountId().toProto())
+            .setTransactionFee(MAX_TRANSACTION_FEE.getValueInTinybar());
   }
 
   public PackedTransaction<T> pack(@NonNull final Client client) {
@@ -63,10 +64,6 @@ public abstract class Transaction <T extends Transaction<T>> {
     buildTransaction(client);
 
     return new PackedTransaction<T>(
-      client,
-      transactionBodyBuilder.build(),
-      this::fromProto,
-      getMethodDescriptor()
-    );
+        client, transactionBodyBuilder.build(), this::fromProto, getMethodDescriptor());
   }
 }

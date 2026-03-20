@@ -1,9 +1,8 @@
 package io.github.manishdait.sdk.key;
 
 import io.github.manishdait.sdk.internal.key.KeyFactory;
-import org.jspecify.annotations.NonNull;
-
 import java.util.Objects;
+import org.jspecify.annotations.NonNull;
 
 public interface PrivateKey extends Key {
   static @NonNull PrivateKey generate() {
@@ -23,7 +22,6 @@ public interface PrivateKey extends Key {
     Objects.requireNonNull(str, "str must not be null");
     return KeyFactory.privateKeyFromString(str);
   }
-
 
   @Override
   default com.hedera.hashgraph.sdk.proto.Key toProto() {

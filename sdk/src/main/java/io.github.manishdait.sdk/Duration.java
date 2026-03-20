@@ -1,17 +1,15 @@
 package io.github.manishdait.sdk;
 
+import java.util.Objects;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Objects;
-
-/**
- * Class representing the Duration.
- */
+/** Class representing the Duration. */
 public final class Duration {
   private final long seconds;
 
   /**
    * Constructor.
+   *
    * @param seconds the value of duration seconds.
    */
   private Duration(final long seconds) {
@@ -20,6 +18,7 @@ public final class Duration {
 
   /**
    * Get value of {@code Duration} in seconds.
+   *
    * @return duration seconds
    */
   public long getSeconds() {
@@ -53,9 +52,7 @@ public final class Duration {
    * @return the protobuf message of {@code Duration}
    */
   public com.hedera.hashgraph.sdk.proto.Duration toProto() {
-    return com.hedera.hashgraph.sdk.proto.Duration.newBuilder()
-      .setSeconds(seconds)
-      .build();
+    return com.hedera.hashgraph.sdk.proto.Duration.newBuilder().setSeconds(seconds).build();
   }
 
   @Override
@@ -78,6 +75,6 @@ public final class Duration {
 
   @Override
   public String toString() {
-    return  "Duration{seconds=" + seconds + "}";
+    return "Duration{seconds=" + seconds + "}";
   }
 }

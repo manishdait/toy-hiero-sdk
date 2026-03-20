@@ -1,16 +1,13 @@
 package io.github.manishdait.sdk.internal.key;
 
-import org.bouncycastle.util.encoders.Hex;
 import io.github.manishdait.sdk.key.KeyType;
 import io.github.manishdait.sdk.key.PrivateKey;
 import io.github.manishdait.sdk.key.PublicKey;
+import java.util.Objects;
+import org.bouncycastle.util.encoders.Hex;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Objects;
-
-/**
- * Factory class for generating and loading cryptographic keys.
- */
+/** Factory class for generating and loading cryptographic keys. */
 public final class KeyFactory {
   /**
    * Generate a ED25519PrivateKey.
@@ -30,7 +27,7 @@ public final class KeyFactory {
   public static @NonNull PrivateKey generatePrivateKey(@NonNull final KeyType keyType) {
     Objects.requireNonNull(keyType, "keyType must not be null");
 
-    return switch(keyType) {
+    return switch (keyType) {
       case ED25519 -> ED25519PrivateKey.generate();
       case ECDSA -> ECDSAPrivateKey.generate();
       default -> throw new IllegalArgumentException("Unsupported key type.");
@@ -53,7 +50,7 @@ public final class KeyFactory {
     try {
       return ECDSAPrivateKey.fromBytes(bytes);
     } catch (Exception e) {
-      //fallback
+      // fallback
     }
 
     throw new RuntimeException("Error parsing Private Key using bytes");

@@ -1,10 +1,9 @@
 package io.github.manishdait.sdk.internal.key;
 
+import io.github.manishdait.sdk.key.KeyType;
 import org.assertj.core.api.Assertions;
 import org.bouncycastle.math.ec.rfc8032.Ed25519;
 import org.bouncycastle.util.encoders.Hex;
-import io.github.manishdait.sdk.internal.key.ED25519PrivateKey;
-import io.github.manishdait.sdk.key.KeyType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +35,8 @@ public class ED25519PrivateKeyTest {
   @Test
   @DisplayName("Should derive an ED25519 private key from DER bytes")
   void shouldDeriveEd25519PrivateKeyFromDerBytes() {
-    final var derStr = "302e020100300506032b6570042204200101010101010101010101010101010101010101010101010101010101010101";
+    final var derStr =
+        "302e020100300506032b6570042204200101010101010101010101010101010101010101010101010101010101010101";
     final var bytes = Hex.decode(derStr);
     final var privateKey = ED25519PrivateKey.fromBytes(bytes);
 
@@ -56,8 +56,8 @@ public class ED25519PrivateKeyTest {
     Assertions.assertThat(newPrivateKey).isNotNull();
     Assertions.assertThat(newPrivateKey.getType()).isEqualTo(KeyType.ED25519);
     Assertions.assertThat(newPrivateKey.getBytes())
-      .hasSize(Ed25519.SECRET_KEY_SIZE)
-      .isEqualTo(privateKey.getBytes());
+        .hasSize(Ed25519.SECRET_KEY_SIZE)
+        .isEqualTo(privateKey.getBytes());
   }
 
   @Test
@@ -71,8 +71,8 @@ public class ED25519PrivateKeyTest {
     Assertions.assertThat(newPrivateKey).isNotNull();
     Assertions.assertThat(newPrivateKey.getType()).isEqualTo(KeyType.ED25519);
     Assertions.assertThat(newPrivateKey.getBytes())
-      .hasSize(Ed25519.SECRET_KEY_SIZE)
-      .isEqualTo(privateKey.getBytes());
+        .hasSize(Ed25519.SECRET_KEY_SIZE)
+        .isEqualTo(privateKey.getBytes());
   }
 
   @Test
@@ -80,8 +80,8 @@ public class ED25519PrivateKeyTest {
   void shouldRaiseErrorOnEd25519PrivateKeyFromInvalidBytes() {
     final var bytes = Hex.decode("a1".repeat(31));
     Assertions.assertThatThrownBy(() -> ED25519PrivateKey.fromBytes(bytes))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid Ed25519 private key encoding");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid Ed25519 private key encoding");
   }
 
   @Test
@@ -89,8 +89,8 @@ public class ED25519PrivateKeyTest {
   void shouldRaiseErrorOnEd25519PrivateKeyFromInvalidDerBytes() {
     final var bytes = Hex.decode("302c020100300506032b65700420" + "a1".repeat(31));
     Assertions.assertThatThrownBy(() -> ED25519PrivateKey.fromBytes(bytes))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid Ed25519 private key encoding");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid Ed25519 private key encoding");
   }
 
   @Test
@@ -98,8 +98,8 @@ public class ED25519PrivateKeyTest {
   void shouldRaiseErrorOnEd25519PrivateKeyFromInvalidLengthDerBytes() {
     final var bytes = Hex.decode("302e020100300506032b8104000a04220420" + "a1".repeat(32));
     Assertions.assertThatThrownBy(() -> ED25519PrivateKey.fromBytes(bytes))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid Ed25519 private key encoding");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid Ed25519 private key encoding");
   }
 
   // Parse from string.
@@ -118,7 +118,8 @@ public class ED25519PrivateKeyTest {
   @Test
   @DisplayName("Should derive an ED25519 private key from DER string")
   void shouldDeriveEd25519PrivateKeyFromDerString() {
-    final var derHex = "302e020100300506032b6570042204200101010101010101010101010101010101010101010101010101010101010101";
+    final var derHex =
+        "302e020100300506032b6570042204200101010101010101010101010101010101010101010101010101010101010101";
     final var privateKey = ED25519PrivateKey.fromString(derHex);
 
     Assertions.assertThat(privateKey).isNotNull();
@@ -137,8 +138,8 @@ public class ED25519PrivateKeyTest {
     Assertions.assertThat(newPrivateKey).isNotNull();
     Assertions.assertThat(newPrivateKey.getType()).isEqualTo(KeyType.ED25519);
     Assertions.assertThat(newPrivateKey.getBytes())
-      .hasSize(Ed25519.SECRET_KEY_SIZE)
-      .isEqualTo(privateKey.getBytes());
+        .hasSize(Ed25519.SECRET_KEY_SIZE)
+        .isEqualTo(privateKey.getBytes());
   }
 
   @Test
@@ -152,8 +153,8 @@ public class ED25519PrivateKeyTest {
     Assertions.assertThat(newPrivateKey).isNotNull();
     Assertions.assertThat(newPrivateKey.getType()).isEqualTo(KeyType.ED25519);
     Assertions.assertThat(newPrivateKey.getBytes())
-      .hasSize(Ed25519.SECRET_KEY_SIZE)
-      .isEqualTo(privateKey.getBytes());
+        .hasSize(Ed25519.SECRET_KEY_SIZE)
+        .isEqualTo(privateKey.getBytes());
   }
 
   @Test
@@ -161,8 +162,8 @@ public class ED25519PrivateKeyTest {
   void shouldRaiseErrorOnEd25519PrivateKeyFromInvalidHex() {
     final var hex = "a1".repeat(31);
     Assertions.assertThatThrownBy(() -> ED25519PrivateKey.fromString(hex))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid Ed25519 private key encoding");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid Ed25519 private key encoding");
   }
 
   @Test
@@ -170,8 +171,8 @@ public class ED25519PrivateKeyTest {
   void shouldRaiseErrorOnEd25519PrivateKeyFromInvalidDerHex() {
     final var derHex = "302c020100300506032b65700420" + "a1".repeat(31);
     Assertions.assertThatThrownBy(() -> ED25519PrivateKey.fromString(derHex))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid Ed25519 private key encoding");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid Ed25519 private key encoding");
   }
 
   @Test
@@ -179,8 +180,8 @@ public class ED25519PrivateKeyTest {
   void shouldRaiseErrorOnEd25519PrivateKeyFromInvalidLengthDerHex() {
     final var derHex = "302e020100300506032b8104000a04220420" + "a1".repeat(32);
     Assertions.assertThatThrownBy(() -> ED25519PrivateKey.fromString(derHex))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid Ed25519 private key encoding");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid Ed25519 private key encoding");
   }
 
   // Derive public key.
@@ -225,9 +226,7 @@ public class ED25519PrivateKeyTest {
     final var privateKey = ED25519PrivateKey.generate();
 
     final var signature = privateKey.sign(message.getBytes());
-    Assertions.assertThat(signature)
-      .isNotNull()
-      .hasSize(Ed25519.SIGNATURE_SIZE);
+    Assertions.assertThat(signature).isNotNull().hasSize(Ed25519.SIGNATURE_SIZE);
 
     // Verify signature with the public key
     final var publicKey = privateKey.getPublicKey();

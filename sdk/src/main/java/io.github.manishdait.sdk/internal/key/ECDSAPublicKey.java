@@ -2,6 +2,11 @@ package io.github.manishdait.sdk.internal.key;
 
 import com.google.protobuf.ByteString;
 import com.hedera.hashgraph.sdk.proto.Key;
+import io.github.manishdait.sdk.key.KeyType;
+import io.github.manishdait.sdk.key.PublicKey;
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Objects;
 import org.bouncycastle.asn1.sec.SECObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
@@ -11,22 +16,15 @@ import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.math.ec.ECPoint;
 import org.bouncycastle.util.encoders.Hex;
-import io.github.manishdait.sdk.key.KeyType;
-import io.github.manishdait.sdk.key.PublicKey;
 import org.jspecify.annotations.NonNull;
 
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Objects;
-
-/**
- * Represent an ECDSA public key using the secp256k1 curve.
- */
+/** Represent an ECDSA public key using the secp256k1 curve. */
 public class ECDSAPublicKey implements PublicKey {
   private final byte[] bytes;
 
   /**
    * Constructor.
+   *
    * @param bytes bytes for the ECDSA public key
    */
   private ECDSAPublicKey(final byte[] bytes) {
@@ -45,8 +43,7 @@ public class ECDSAPublicKey implements PublicKey {
 
     if (bytes.length == 32) {
       throw new RuntimeException(
-          "Cannot generate public key from raw 32-byte scalar directly here. Use ECDSAPrivateKey.getPublicKey()"
-      );
+          "Cannot generate public key from raw 32-byte scalar directly here. Use ECDSAPrivateKey.getPublicKey()");
     }
 
     try {
@@ -87,9 +84,7 @@ public class ECDSAPublicKey implements PublicKey {
 
   @Override
   public Key toProto() {
-    return Key.newBuilder()
-      .setECDSASecp256K1(ByteString.copyFrom(bytes))
-      .build();
+    return Key.newBuilder().setECDSASecp256K1(ByteString.copyFrom(bytes)).build();
   }
 
   @Override
@@ -100,10 +95,11 @@ public class ECDSAPublicKey implements PublicKey {
   @Override
   public byte[] getDERBytes() {
     try {
-      SubjectPublicKeyInfo spki = new SubjectPublicKeyInfo(
-        new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey, SECObjectIdentifiers.secp256k1),
-        this.bytes
-      );
+      SubjectPublicKeyInfo spki =
+          new SubjectPublicKeyInfo(
+              new AlgorithmIdentifier(
+                  X9ObjectIdentifiers.id_ecPublicKey, SECObjectIdentifiers.secp256k1),
+              this.bytes);
 
       return spki.getEncoded();
     } catch (Exception e) {
@@ -141,10 +137,7 @@ public class ECDSAPublicKey implements PublicKey {
     if (r.signum() <= 0 || r.compareTo(n) >= 0) return false;
     if (s.signum() <= 0 || s.compareTo(n) >= 0) return false;
 
-    ECPoint q = ECDSAPrivateKey.CURVE
-      .getCurve()
-      .decodePoint(this.bytes)
-      .normalize();
+    ECPoint q = ECDSAPrivateKey.CURVE.getCurve().decodePoint(this.bytes).normalize();
 
     ECDSASigner signer = new ECDSASigner();
     var pub = new ECPublicKeyParameters(q, ECDSAPrivateKey.CURVE);

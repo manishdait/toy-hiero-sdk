@@ -1,18 +1,16 @@
 package io.github.manishdait.sdk;
 
-import org.jspecify.annotations.NonNull;
-
 import java.math.BigDecimal;
 import java.util.Objects;
+import org.jspecify.annotations.NonNull;
 
-/**
- * Class Representing Hbar.
- */
+/** Class Representing Hbar. */
 public class Hbar implements Comparable<Hbar> {
   private final long valueInTinybar;
 
   /**
    * Constructor.
+   *
    * @param valueInTinybar the amount in tinybar
    */
   private Hbar(final long valueInTinybar) {
@@ -21,6 +19,7 @@ public class Hbar implements Comparable<Hbar> {
 
   /**
    * Get the value in tinybar.
+   *
    * @return the value of Hbar in tinybar
    */
   public long getValueInTinybar() {
@@ -74,7 +73,8 @@ public class Hbar implements Comparable<Hbar> {
     final BigDecimal tinybars = amount.multiply(BigDecimal.valueOf(unit.getTinybar()));
 
     if (tinybars.doubleValue() % 1 != 0) {
-      throw new IllegalArgumentException("Amount and Unit combination results in a fractional value for tinybar.");
+      throw new IllegalArgumentException(
+          "Amount and Unit combination results in a fractional value for tinybar.");
     }
 
     return new Hbar(tinybars.longValue());

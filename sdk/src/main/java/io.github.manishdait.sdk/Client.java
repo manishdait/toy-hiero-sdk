@@ -1,7 +1,5 @@
 package io.github.manishdait.sdk;
 
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
 import io.github.manishdait.sdk.account.Account;
 import io.github.manishdait.sdk.account.AccountId;
 import io.github.manishdait.sdk.internal.Config;
@@ -9,13 +7,12 @@ import io.github.manishdait.sdk.key.PrivateKey;
 import io.github.manishdait.sdk.network.Network;
 import io.github.manishdait.sdk.network.NetworkType;
 import io.github.manishdait.sdk.network.Node;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import java.util.Objects;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Objects;
-
-/**
- * Client for Hiero network containing the operator account and network information.
- */
+/** Client for Hiero network containing the operator account and network information. */
 public class Client {
   private Account operatorAccount;
   private final Network network;
@@ -24,18 +21,20 @@ public class Client {
 
   /**
    * Constructor.
+   *
    * @param network type of {@code Network} for which the client must create
    */
   private Client(@NonNull final Network network) {
     Objects.requireNonNull(network, "network must not be null");
 
     this.network = network;
-    this.mirrorChannel = ManagedChannelBuilder
-      .forTarget(Config.MIRROR_NODE_ADDRESS.get(network.getNetworkType()))
-      .build();
+    this.mirrorChannel =
+        ManagedChannelBuilder.forTarget(Config.MIRROR_NODE_ADDRESS.get(network.getNetworkType()))
+            .build();
 
     this.network.setNodes(this);
-  };
+  }
+  ;
 
   /**
    * Create a client for testnet.
@@ -89,7 +88,8 @@ public class Client {
    * @param accountId the operator account id
    * @param privateKey the operator private key
    */
-  public void setOperatorAccount(@NonNull final AccountId accountId, @NonNull final PrivateKey privateKey) {
+  public void setOperatorAccount(
+      @NonNull final AccountId accountId, @NonNull final PrivateKey privateKey) {
     Objects.requireNonNull(accountId, "accountId must not be null");
     Objects.requireNonNull(privateKey, "privateKey must not be null");
     this.setOperatorAccount(new Account(accountId, privateKey));
@@ -97,6 +97,7 @@ public class Client {
 
   /**
    * Get operator account for the client.
+   *
    * @return the operator {@code Account}
    */
   public @NonNull Account getOperatorAccount() {
@@ -105,6 +106,7 @@ public class Client {
 
   /**
    * Get network node for the client.
+   *
    * @return the network {@code Node}
    */
   public @NonNull Node getNode() {
@@ -113,6 +115,7 @@ public class Client {
 
   /**
    * Get operator account id for the client.
+   *
    * @return the operator {@code AccountId}
    */
   public @NonNull AccountId getOperatorAccountId() {
@@ -121,6 +124,7 @@ public class Client {
 
   /**
    * Get operator account private key for the client.
+   *
    * @return the operator {@code PrivateKey}
    */
   public @NonNull PrivateKey getOperatorPrivateKey() {
@@ -129,6 +133,7 @@ public class Client {
 
   /**
    * Get network for the client.
+   *
    * @return {@code Network}
    */
   public @NonNull Network getNetwork() {
@@ -137,9 +142,10 @@ public class Client {
 
   /**
    * Get mirror channel for the client.
+   *
    * @return {@code ManagedChannel}
    */
-  public  @NonNull ManagedChannel getMirrorChannel() {
+  public @NonNull ManagedChannel getMirrorChannel() {
     return this.mirrorChannel;
   }
 }

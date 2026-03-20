@@ -1,10 +1,8 @@
 package io.github.manishdait.sdk.internal.key;
 
+import io.github.manishdait.sdk.key.KeyType;
 import org.assertj.core.api.Assertions;
 import org.bouncycastle.util.encoders.Hex;
-import io.github.manishdait.sdk.internal.key.ECDSAPrivateKey;
-import io.github.manishdait.sdk.internal.key.ECDSAPublicKey;
-import io.github.manishdait.sdk.key.KeyType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +25,8 @@ public class ECDSAPublicKeyTest {
   @Test
   @DisplayName("Should parse a ECDSA public key from bytes")
   void shouldParsePublicKeyFromBytes() {
-    final var bytes = Hex.decode("0281c2e57fecef82ff4f546dece3684acb6e2fe12a97af066348de81ccaf05d0a4");
+    final var bytes =
+        Hex.decode("0281c2e57fecef82ff4f546dece3684acb6e2fe12a97af066348de81ccaf05d0a4");
     final var publicKey = ECDSAPublicKey.fromBytes(bytes);
 
     Assertions.assertThat(publicKey).isNotNull();
@@ -38,9 +37,10 @@ public class ECDSAPublicKeyTest {
   @Test
   @DisplayName("Should parse a ECDSA public key from uncompress bytes")
   void shouldParsePublicKeyFromUncompressBytes() {
-    final var hex = "04" +
-      "0abe0517fcf06e0c160ca821aa2909945752e08169f46c984cb6b02076a3b" +
-      "29513f047e5c13770101c321f332157377d2862b7c7ed14eedca3978b3b9d007659";
+    final var hex =
+        "04"
+            + "0abe0517fcf06e0c160ca821aa2909945752e08169f46c984cb6b02076a3b"
+            + "29513f047e5c13770101c321f332157377d2862b7c7ed14eedca3978b3b9d007659";
 
     final var bytes = Hex.decode(hex);
     final var publicKey = ECDSAPublicKey.fromBytes(bytes);
@@ -53,7 +53,8 @@ public class ECDSAPublicKeyTest {
   @Test
   @DisplayName("Should parse a ECDSA public key from DER bytes")
   void shouldParsePublicKeyFromDerBytes() {
-    final var hex = "302d300706052b8104000a032200024f832d18d92c9d967afa32e0655400b16b2993f5629bd6837b4ad82755e52a02";
+    final var hex =
+        "302d300706052b8104000a032200024f832d18d92c9d967afa32e0655400b16b2993f5629bd6837b4ad82755e52a02";
     final var bytes = Hex.decode(hex);
     final var publicKey = ECDSAPublicKey.fromBytes(bytes);
 
@@ -97,8 +98,8 @@ public class ECDSAPublicKeyTest {
   void shouldRaiseErrorWhenParsePublicKeyFromInvalidBytes() {
     final var bytes = Hex.decode("a1".repeat(31));
     Assertions.assertThatThrownBy(() -> ECDSAPublicKey.fromBytes(bytes))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid ECDSA public key length");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid ECDSA public key length");
   }
 
   @Test
@@ -106,8 +107,8 @@ public class ECDSAPublicKeyTest {
   void shouldRaiseErrorWhenParsePublicKeyFromInvalidDerBytes() {
     final var bytes = Hex.decode("302a300506032b6570032100" + "11".repeat(31));
     Assertions.assertThatThrownBy(() -> ECDSAPublicKey.fromBytes(bytes))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid ECDSA public key length");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid ECDSA public key length");
   }
 
   // Parse public key from string.
@@ -126,9 +127,10 @@ public class ECDSAPublicKeyTest {
   @Test
   @DisplayName("Should parse a ECDSA public key from uncompress hex")
   void shouldParsePublicKeyFromUncompressString() {
-    final var hex = "04" +
-      "0abe0517fcf06e0c160ca821aa2909945752e08169f46c984cb6b02076a3b" +
-      "29513f047e5c13770101c321f332157377d2862b7c7ed14eedca3978b3b9d007659";
+    final var hex =
+        "04"
+            + "0abe0517fcf06e0c160ca821aa2909945752e08169f46c984cb6b02076a3b"
+            + "29513f047e5c13770101c321f332157377d2862b7c7ed14eedca3978b3b9d007659";
 
     final var publicKey = ECDSAPublicKey.fromString(hex);
 
@@ -140,7 +142,8 @@ public class ECDSAPublicKeyTest {
   @Test
   @DisplayName("Should parse a ECDSA public key from DER string")
   void shouldParsePublicKeyFromDerString() {
-    final var derHex = "302d300706052b8104000a032200024f832d18d92c9d967afa32e0655400b16b2993f5629bd6837b4ad82755e52a02";
+    final var derHex =
+        "302d300706052b8104000a032200024f832d18d92c9d967afa32e0655400b16b2993f5629bd6837b4ad82755e52a02";
     final var publicKey = ECDSAPublicKey.fromString(derHex);
 
     Assertions.assertThat(publicKey).isNotNull();
@@ -183,8 +186,8 @@ public class ECDSAPublicKeyTest {
   void shouldRaiseErrorWhenParsePublicKeyFromInvalidHex() {
     final var hex = "a1".repeat(31);
     Assertions.assertThatThrownBy(() -> ECDSAPublicKey.fromString(hex))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid ECDSA public key length");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid ECDSA public key length");
   }
 
   @Test
@@ -192,8 +195,8 @@ public class ECDSAPublicKeyTest {
   void shouldRaiseErrorWhenParsePublicKeyFromInvalidDerHex() {
     final var derHex = "302a300506032b6570032100" + "11".repeat(31);
     Assertions.assertThatThrownBy(() -> ECDSAPublicKey.fromString(derHex))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid ECDSA public key length");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid ECDSA public key length");
   }
 
   // To string methods.
@@ -225,9 +228,7 @@ public class ECDSAPublicKeyTest {
     final var privateKey = ECDSAPrivateKey.generate();
 
     final var signature = privateKey.sign(message.getBytes());
-    Assertions.assertThat(signature)
-      .isNotNull()
-      .hasSize(64);
+    Assertions.assertThat(signature).isNotNull().hasSize(64);
 
     final var publicKey = privateKey.getPublicKey();
     Assertions.assertThat(publicKey.verify(message.getBytes(), signature)).isTrue();

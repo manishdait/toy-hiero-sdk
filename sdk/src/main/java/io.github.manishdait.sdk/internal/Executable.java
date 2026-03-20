@@ -1,15 +1,16 @@
 package io.github.manishdait.sdk.internal;
 
+import io.github.manishdait.sdk.Client;
 import io.grpc.CallOptions;
 import io.grpc.MethodDescriptor;
 import io.grpc.stub.ClientCalls;
-import io.github.manishdait.sdk.Client;
 import org.jspecify.annotations.NonNull;
 
-public abstract class Executable <ProtoRequest, ProtoResponse> {
+public abstract class Executable<ProtoRequest, ProtoResponse> {
   protected abstract MethodDescriptor<ProtoRequest, ProtoResponse> getMethodDescriptor();
 
   protected abstract ProtoRequest buildRequest();
+
   protected abstract ExecutionState getExecutionState(ProtoResponse response);
 
   public ProtoResponse execute(@NonNull final Client client) {
@@ -18,10 +19,9 @@ public abstract class Executable <ProtoRequest, ProtoResponse> {
     for (int i = 0; i < Config.MAX_ATTEMPTS; i++) {
       final var channel = client.getNode().getChannel();
 
-      final var response = ClientCalls.blockingUnaryCall(
-        channel.newCall(this.getMethodDescriptor(), CallOptions.DEFAULT),
-        request
-      );
+      final var response =
+          ClientCalls.blockingUnaryCall(
+              channel.newCall(this.getMethodDescriptor(), CallOptions.DEFAULT), request);
 
       final var executionState = this.getExecutionState(response);
 
@@ -42,6 +42,6 @@ public abstract class Executable <ProtoRequest, ProtoResponse> {
       }
     }
 
-    throw  new RuntimeException("Max attempts cross");
+    throw new RuntimeException("Max attempts cross");
   }
 }

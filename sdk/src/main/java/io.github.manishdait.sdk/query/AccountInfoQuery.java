@@ -4,14 +4,12 @@ import com.hedera.hashgraph.sdk.proto.CryptoGetInfoQuery;
 import com.hedera.hashgraph.sdk.proto.CryptoServiceGrpc;
 import com.hedera.hashgraph.sdk.proto.Response;
 import com.hedera.hashgraph.sdk.proto.ResponseHeader;
-
-import io.grpc.MethodDescriptor;
 import io.github.manishdait.sdk.Client;
 import io.github.manishdait.sdk.account.AccountId;
 import io.github.manishdait.sdk.account.AccountInfo;
-import org.jspecify.annotations.NonNull;
-
+import io.grpc.MethodDescriptor;
 import java.util.Objects;
+import org.jspecify.annotations.NonNull;
 
 public class AccountInfoQuery extends Query {
   private AccountId accountId;
@@ -30,21 +28,19 @@ public class AccountInfoQuery extends Query {
 
   @Override
   public com.hedera.hashgraph.sdk.proto.Query toProto() {
-    var query = CryptoGetInfoQuery.newBuilder()
-      .setAccountID(this.accountId.toProto())
-      .setHeader(this.queryHeader)
-      .build();
+    var query =
+        CryptoGetInfoQuery.newBuilder()
+            .setAccountID(this.accountId.toProto())
+            .setHeader(this.queryHeader)
+            .build();
 
-    return com.hedera.hashgraph.sdk.proto.Query.newBuilder()
-      .setCryptoGetInfo(query)
-      .build();
+    return com.hedera.hashgraph.sdk.proto.Query.newBuilder().setCryptoGetInfo(query).build();
   }
 
   @Override
   protected MethodDescriptor<com.hedera.hashgraph.sdk.proto.Query, Response> getMethodDescriptor() {
     return CryptoServiceGrpc.getGetAccountInfoMethod();
   }
-
 
   @Override
   protected ResponseHeader getResponseHeader(@NonNull final Response response) {

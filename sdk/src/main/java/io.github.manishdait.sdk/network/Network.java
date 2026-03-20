@@ -4,13 +4,12 @@ import io.github.manishdait.sdk.Client;
 import io.github.manishdait.sdk.account.AccountId;
 import io.github.manishdait.sdk.address_book.AddressBookQuery;
 import io.github.manishdait.sdk.internal.Config;
-import org.jspecify.annotations.NonNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.jspecify.annotations.NonNull;
 
 public class Network {
   private final NetworkType networkType;
@@ -53,7 +52,11 @@ public class Network {
       var nodeAccountId = address.nodeAccountId();
 
       for (var endpoint : address.serviceEndpoints()) {
-        var node = new Node(Node.resolveAddressFromBytes(endpoint.ipAddressV4()), endpoint.port(), nodeAccountId);
+        var node =
+            new Node(
+                Node.resolveAddressFromBytes(endpoint.ipAddressV4()),
+                endpoint.port(),
+                nodeAccountId);
 
         if (node.getPort() == Config.PLAIN_PORT) {
           if (!proxies.containsKey(nodeAccountId)) {

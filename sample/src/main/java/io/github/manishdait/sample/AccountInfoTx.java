@@ -17,17 +17,17 @@ public class AccountInfoTx {
 
     Client client = Client.forTestnet();
     client.setOperatorAccount(
-      AccountId.fromString(dotenv.get("HIERO_ACCOUNT_ID")),
-      PrivateKey.fromString(dotenv.get("HIERO_PRIVATE_KEY"))
-    );
+        AccountId.fromString(dotenv.get("HIERO_ACCOUNT_ID")),
+        PrivateKey.fromString(dotenv.get("HIERO_PRIVATE_KEY")));
 
     PrivateKey privateKey = PrivateKey.generate();
-    TransactionResponse transactionResponse = new AccountCreateTransaction()
-      .withKey(privateKey)
-      .withInitialBalance(1)
-      .withAccountMemo("Test SDK Delete Account")
-      .pack(client)
-      .send();
+    TransactionResponse transactionResponse =
+        new AccountCreateTransaction()
+            .withKey(privateKey)
+            .withInitialBalance(1)
+            .withAccountMemo("Test SDK Delete Account")
+            .pack(client)
+            .send();
 
     TransactionReceipt receipt = transactionResponse.queryReceipt();
 
@@ -38,9 +38,7 @@ public class AccountInfoTx {
     AccountId accountId = receipt.accountId();
     System.out.println("Account Create with ID: " + receipt.accountId());
 
-    AccountInfo accountInfo = new AccountInfoQuery()
-      .withAccountId(accountId)
-      .query(client);
+    AccountInfo accountInfo = new AccountInfoQuery().withAccountId(accountId).query(client);
 
     System.out.println(accountInfo);
   }

@@ -1,13 +1,12 @@
 package io.github.manishdait.sdk.network;
 
+import io.github.manishdait.sdk.account.AccountId;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.github.manishdait.sdk.account.AccountId;
-import org.jspecify.annotations.NonNull;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Objects;
+import org.jspecify.annotations.NonNull;
 
 public class Node {
   private final String address;
@@ -18,10 +17,9 @@ public class Node {
 
   public Node(@NonNull final String address, @NonNull final String accountId) {
     this(
-      address.split(":")[0],
-      Integer.parseInt(address.split(":")[1]),
-      AccountId.fromString(accountId)
-    );
+        address.split(":")[0],
+        Integer.parseInt(address.split(":")[1]),
+        AccountId.fromString(accountId));
   }
 
   public Node(@NonNull final String address, final int port, @NonNull final AccountId accountId) {
@@ -57,12 +55,17 @@ public class Node {
 
   @Override
   public String toString() {
-    return "Node[" +
-      "address='" + address + '\'' +
-      ", port=" + port +
-      ", accountId=" + accountId +
-      ", channel=" + channel +
-      ']';
+    return "Node["
+        + "address='"
+        + address
+        + '\''
+        + ", port="
+        + port
+        + ", accountId="
+        + accountId
+        + ", channel="
+        + channel
+        + ']';
   }
 
   protected static String resolveAddressFromBytes(byte[] bytes) {

@@ -3,14 +3,11 @@ package io.github.manishdait.sdk.transaction;
 import com.hedera.hashgraph.sdk.proto.Timestamp;
 import com.hedera.hashgraph.sdk.proto.TransactionID;
 import io.github.manishdait.sdk.account.AccountId;
-import org.jspecify.annotations.NonNull;
-
 import java.time.Instant;
 import java.util.Objects;
+import org.jspecify.annotations.NonNull;
 
-/**
- * Represent a TransactionID class.
- */
+/** Represent a TransactionID class. */
 public class TransactionId {
   private final Instant transactionValidStart;
   private final AccountId accountId;
@@ -20,17 +17,17 @@ public class TransactionId {
   /**
    * Returns a new instance of {@link TransactionId}.
    *
-   * @param transactionValidStart  the timestamp at which a transaction begins to be valid
+   * @param transactionValidStart the timestamp at which a transaction begins to be valid
    * @param accountId {@link AccountId} paying for the transaction fee
    * @param scheduled tells weather transaction type is scheduled or not
-   * @param nonce identifier for an internal transaction that was spawned as part of handling a user transaction
+   * @param nonce identifier for an internal transaction that was spawned as part of handling a user
+   *     transaction
    */
   private TransactionId(
-    @NonNull final Instant transactionValidStart,
-    @NonNull final AccountId accountId,
-    final boolean scheduled,
-    final int nonce
-  ) {
+      @NonNull final Instant transactionValidStart,
+      @NonNull final AccountId accountId,
+      final boolean scheduled,
+      final int nonce) {
     Objects.requireNonNull(transactionValidStart, "transactionValidStart must not be null.");
     Objects.requireNonNull(accountId, "accountId must not be null.");
 
@@ -43,13 +40,11 @@ public class TransactionId {
   /**
    * Returns a new instance of {@link TransactionId}.
    *
-   * @param transactionValidStart  the timestamp at which a transaction begins to be valid
+   * @param transactionValidStart the timestamp at which a transaction begins to be valid
    * @param accountId {@link AccountId} paying for the transaction fee
    */
   private TransactionId(
-    @NonNull final Instant transactionValidStart,
-    @NonNull final AccountId accountId
-  ) {
+      @NonNull final Instant transactionValidStart, @NonNull final AccountId accountId) {
     this(transactionValidStart, accountId, false, 0);
   }
 
@@ -90,14 +85,12 @@ public class TransactionId {
     Objects.requireNonNull(proto, "proto must not be null.");
 
     return new TransactionId(
-      Instant.ofEpochSecond(
-        proto.getTransactionValidStart().getSeconds(),
-        proto.getTransactionValidStart().getNanos()
-      ),
-      AccountId.fromProto(proto.getAccountID()),
-      proto.getScheduled(),
-      proto.getNonce()
-    );
+        Instant.ofEpochSecond(
+            proto.getTransactionValidStart().getSeconds(),
+            proto.getTransactionValidStart().getNanos()),
+        AccountId.fromProto(proto.getAccountID()),
+        proto.getScheduled(),
+        proto.getNonce());
   }
 
   /**
@@ -107,15 +100,14 @@ public class TransactionId {
    */
   public TransactionID toProto() {
     return TransactionID.newBuilder()
-      .setTransactionValidStart(
-        Timestamp.newBuilder()
-          .setSeconds(this.transactionValidStart.getEpochSecond())
-          .setNanos(this.transactionValidStart.getNano())
-          .build()
-      )
-      .setAccountID(this.accountId.toProto())
-      .setScheduled(this.isScheduled())
-      .setNonce(this.nonce)
-      .build();
+        .setTransactionValidStart(
+            Timestamp.newBuilder()
+                .setSeconds(this.transactionValidStart.getEpochSecond())
+                .setNanos(this.transactionValidStart.getNano())
+                .build())
+        .setAccountID(this.accountId.toProto())
+        .setScheduled(this.isScheduled())
+        .setNonce(this.nonce)
+        .build();
   }
 }

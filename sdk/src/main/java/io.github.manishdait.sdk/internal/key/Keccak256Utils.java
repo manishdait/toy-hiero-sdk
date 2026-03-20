@@ -1,14 +1,12 @@
 package io.github.manishdait.sdk.internal.key;
 
 import org.bouncycastle.crypto.digests.KeccakDigest;
-import org.jspecify.annotations.NonNull;
 
-/**
- * Helper Keccak256 util
- */
+/** Helper Keccak256 util */
 public final class Keccak256Utils {
   /**
    * Returns a keccak256 hash of the input bytes
+   *
    * @param input the bytes to hash
    * @return keccak256 hashed bytes
    */

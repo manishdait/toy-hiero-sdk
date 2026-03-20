@@ -4,12 +4,11 @@ import com.hedera.hashgraph.sdk.proto.CryptoDeleteTransactionBody;
 import com.hedera.hashgraph.sdk.proto.CryptoServiceGrpc;
 import com.hedera.hashgraph.sdk.proto.TransactionBody;
 import com.hedera.hashgraph.sdk.proto.TransactionResponse;
-import io.grpc.MethodDescriptor;
 import io.github.manishdait.sdk.Client;
 import io.github.manishdait.sdk.transaction.Transaction;
-import org.jspecify.annotations.NonNull;
-
+import io.grpc.MethodDescriptor;
 import java.util.Objects;
+import org.jspecify.annotations.NonNull;
 
 public class AccountDeleteTransaction extends Transaction<AccountDeleteTransaction> {
   private AccountId accountId;
@@ -19,9 +18,9 @@ public class AccountDeleteTransaction extends Transaction<AccountDeleteTransacti
 
   public CryptoDeleteTransactionBody toProto() {
     return CryptoDeleteTransactionBody.newBuilder()
-      .setDeleteAccountID(accountId.toProto())
-      .setTransferAccountID(transferAccountId.toProto())
-      .build();
+        .setDeleteAccountID(accountId.toProto())
+        .setTransferAccountID(transferAccountId.toProto())
+        .build();
   }
 
   public AccountDeleteTransaction withAccountId(@NonNull final AccountId accountId) {
@@ -30,7 +29,8 @@ public class AccountDeleteTransaction extends Transaction<AccountDeleteTransacti
     return this;
   }
 
-  public AccountDeleteTransaction withTransferAccountId(@NonNull final AccountId transferAccountId) {
+  public AccountDeleteTransaction withTransferAccountId(
+      @NonNull final AccountId transferAccountId) {
     Objects.requireNonNull(transferAccountId, "transferAccountId must not be null");
     this.transferAccountId = transferAccountId;
     return this;
@@ -59,7 +59,8 @@ public class AccountDeleteTransaction extends Transaction<AccountDeleteTransacti
   }
 
   @Override
-  protected MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction, TransactionResponse> getMethodDescriptor() {
+  protected MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction, TransactionResponse>
+      getMethodDescriptor() {
     return CryptoServiceGrpc.getCryptoDeleteMethod();
   }
 }

@@ -6,10 +6,8 @@ import io.github.manishdait.sdk.Status;
 import io.github.manishdait.sdk.account.AccountBalance;
 import io.github.manishdait.sdk.account.AccountCreateTransaction;
 import io.github.manishdait.sdk.account.AccountId;
-import io.github.manishdait.sdk.account.AccountInfo;
 import io.github.manishdait.sdk.key.PrivateKey;
 import io.github.manishdait.sdk.query.AccountBalanceQuery;
-import io.github.manishdait.sdk.query.AccountInfoQuery;
 import io.github.manishdait.sdk.transaction.TransactionReceipt;
 import io.github.manishdait.sdk.transaction.TransactionResponse;
 
@@ -19,17 +17,17 @@ public class AccountBalanceTx {
 
     Client client = Client.forTestnet();
     client.setOperatorAccount(
-      AccountId.fromString(dotenv.get("HIERO_ACCOUNT_ID")),
-      PrivateKey.fromString(dotenv.get("HIERO_PRIVATE_KEY"))
-    );
+        AccountId.fromString(dotenv.get("HIERO_ACCOUNT_ID")),
+        PrivateKey.fromString(dotenv.get("HIERO_PRIVATE_KEY")));
 
     PrivateKey privateKey = PrivateKey.generate();
-    TransactionResponse transactionResponse = new AccountCreateTransaction()
-      .withKey(privateKey)
-      .withInitialBalance(1)
-      .withAccountMemo("Test SDK Delete Account")
-      .pack(client)
-      .send();
+    TransactionResponse transactionResponse =
+        new AccountCreateTransaction()
+            .withKey(privateKey)
+            .withInitialBalance(1)
+            .withAccountMemo("Test SDK Delete Account")
+            .pack(client)
+            .send();
 
     TransactionReceipt receipt = transactionResponse.queryReceipt();
 
@@ -40,9 +38,8 @@ public class AccountBalanceTx {
     AccountId accountId = receipt.accountId();
     System.out.println("Account Create with ID: " + receipt.accountId());
 
-    AccountBalance accountBalance = new AccountBalanceQuery()
-      .withAccountId(accountId)
-      .query(client);
+    AccountBalance accountBalance =
+        new AccountBalanceQuery().withAccountId(accountId).query(client);
 
     System.out.println(accountBalance);
   }

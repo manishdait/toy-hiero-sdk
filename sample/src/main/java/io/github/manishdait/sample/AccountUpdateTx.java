@@ -4,7 +4,6 @@ import io.github.cdimascio.dotenv.Dotenv;
 import io.github.manishdait.sdk.Client;
 import io.github.manishdait.sdk.Status;
 import io.github.manishdait.sdk.account.AccountCreateTransaction;
-import io.github.manishdait.sdk.account.AccountDeleteTransaction;
 import io.github.manishdait.sdk.account.AccountId;
 import io.github.manishdait.sdk.account.AccountUpdateTransaction;
 import io.github.manishdait.sdk.key.PrivateKey;
@@ -17,17 +16,17 @@ public class AccountUpdateTx {
 
     Client client = Client.forTestnet();
     client.setOperatorAccount(
-      AccountId.fromString(dotenv.get("HIERO_ACCOUNT_ID")),
-      PrivateKey.fromString(dotenv.get("HIERO_PRIVATE_KEY"))
-    );
+        AccountId.fromString(dotenv.get("HIERO_ACCOUNT_ID")),
+        PrivateKey.fromString(dotenv.get("HIERO_PRIVATE_KEY")));
 
     PrivateKey privateKey = PrivateKey.generate();
-    TransactionResponse transactionResponse = new AccountCreateTransaction()
-      .withKey(privateKey)
-      .withInitialBalance(1)
-      .withAccountMemo("Test SDK Account")
-      .pack(client)
-      .send();
+    TransactionResponse transactionResponse =
+        new AccountCreateTransaction()
+            .withKey(privateKey)
+            .withInitialBalance(1)
+            .withAccountMemo("Test SDK Account")
+            .pack(client)
+            .send();
 
     TransactionReceipt receipt = transactionResponse.queryReceipt();
 
@@ -38,13 +37,14 @@ public class AccountUpdateTx {
     AccountId accountId = receipt.accountId();
     System.out.println("Account Create with ID: " + receipt.accountId());
 
-    TransactionReceipt accountUpdateReceipt = new AccountUpdateTransaction()
-      .withAccountId(accountId)
-      .withAccountMemo("Update the Account Tx")
-      .pack(client)
-      .signWith(privateKey)
-      .send()
-      .queryReceipt();
+    TransactionReceipt accountUpdateReceipt =
+        new AccountUpdateTransaction()
+            .withAccountId(accountId)
+            .withAccountMemo("Update the Account Tx")
+            .pack(client)
+            .signWith(privateKey)
+            .send()
+            .queryReceipt();
 
     System.out.println(accountUpdateReceipt);
   }

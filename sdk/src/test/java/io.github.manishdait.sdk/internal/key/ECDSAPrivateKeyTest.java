@@ -1,9 +1,8 @@
 package io.github.manishdait.sdk.internal.key;
 
+import io.github.manishdait.sdk.key.KeyType;
 import org.assertj.core.api.Assertions;
 import org.bouncycastle.util.encoders.Hex;
-import io.github.manishdait.sdk.internal.key.ECDSAPrivateKey;
-import io.github.manishdait.sdk.key.KeyType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -35,10 +34,11 @@ public class ECDSAPrivateKeyTest {
   @Test
   @DisplayName("Should derive an ECDSA private key from DER bytes")
   void shouldDeriveECDSAPrivateKeyFromDerBytes() {
-    final var derStr = "30740201010" +
-      "4200000000000000000000000000000000000000000000000000000000000000001" +
-      "a00706052b8104000aa1440342000479be667ef9dcbbac55a06295ce870b07029bfc" +
-      "db2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8";
+    final var derStr =
+        "30740201010"
+            + "4200000000000000000000000000000000000000000000000000000000000000001"
+            + "a00706052b8104000aa1440342000479be667ef9dcbbac55a06295ce870b07029bfc"
+            + "db2dce28d959f2815b16f81798483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8";
 
     final var bytes = Hex.decode(derStr);
     final var privateKey = ECDSAPrivateKey.fromBytes(bytes);
@@ -58,9 +58,7 @@ public class ECDSAPrivateKeyTest {
 
     Assertions.assertThat(newPrivateKey).isNotNull();
     Assertions.assertThat(newPrivateKey.getType()).isEqualTo(KeyType.ECDSA);
-    Assertions.assertThat(newPrivateKey.getBytes())
-      .hasSize(32)
-      .isEqualTo(privateKey.getBytes());
+    Assertions.assertThat(newPrivateKey.getBytes()).hasSize(32).isEqualTo(privateKey.getBytes());
   }
 
   @Test
@@ -73,9 +71,7 @@ public class ECDSAPrivateKeyTest {
 
     Assertions.assertThat(newPrivateKey).isNotNull();
     Assertions.assertThat(newPrivateKey.getType()).isEqualTo(KeyType.ECDSA);
-    Assertions.assertThat(newPrivateKey.getBytes())
-      .hasSize(32)
-      .isEqualTo(privateKey.getBytes());
+    Assertions.assertThat(newPrivateKey.getBytes()).hasSize(32).isEqualTo(privateKey.getBytes());
   }
 
   @Test
@@ -83,8 +79,8 @@ public class ECDSAPrivateKeyTest {
   void shouldRaiseErrorOnECDSAPrivateKeyFromInvalidBytes() {
     final var bytes = Hex.decode("a1".repeat(31));
     Assertions.assertThatThrownBy(() -> ECDSAPrivateKey.fromBytes(bytes))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid ECDSA private key encoding");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid ECDSA private key encoding");
   }
 
   @Test
@@ -92,8 +88,8 @@ public class ECDSAPrivateKeyTest {
   void shouldRaiseErrorOnECDSAPrivateKeyFromInvalidDerBytes() {
     final var bytes = Hex.decode("302c020100300506032b65700420" + "a1".repeat(31));
     Assertions.assertThatThrownBy(() -> ECDSAPrivateKey.fromBytes(bytes))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid ECDSA private key encoding");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid ECDSA private key encoding");
   }
 
   @Test
@@ -101,8 +97,8 @@ public class ECDSAPrivateKeyTest {
   void shouldRaiseErrorOnECDSAPrivateKeyFromInvalidLengthDerBytes() {
     final var bytes = Hex.decode("302e020100300506032b8104000a04220420" + "a1".repeat(32));
     Assertions.assertThatThrownBy(() -> ECDSAPrivateKey.fromBytes(bytes))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid ECDSA private key encoding");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid ECDSA private key encoding");
   }
 
   // Parse from string.
@@ -121,7 +117,8 @@ public class ECDSAPrivateKeyTest {
   @Test
   @DisplayName("Should derive an ECDSA private key from DER string")
   void shouldDeriveECDSAPrivateKeyFromDerString() {
-    final var derHex = "302e020100300506032b6570042204200101010101010101010101010101010101010101010101010101010101010101";
+    final var derHex =
+        "302e020100300506032b6570042204200101010101010101010101010101010101010101010101010101010101010101";
     final var privateKey = ECDSAPrivateKey.fromString(derHex);
 
     Assertions.assertThat(privateKey).isNotNull();
@@ -139,9 +136,7 @@ public class ECDSAPrivateKeyTest {
 
     Assertions.assertThat(newPrivateKey).isNotNull();
     Assertions.assertThat(newPrivateKey.getType()).isEqualTo(KeyType.ECDSA);
-    Assertions.assertThat(newPrivateKey.getBytes())
-      .hasSize(32)
-      .isEqualTo(privateKey.getBytes());
+    Assertions.assertThat(newPrivateKey.getBytes()).hasSize(32).isEqualTo(privateKey.getBytes());
   }
 
   @Test
@@ -154,9 +149,7 @@ public class ECDSAPrivateKeyTest {
 
     Assertions.assertThat(newPrivateKey).isNotNull();
     Assertions.assertThat(newPrivateKey.getType()).isEqualTo(KeyType.ECDSA);
-    Assertions.assertThat(newPrivateKey.getBytes())
-      .hasSize(32)
-      .isEqualTo(privateKey.getBytes());
+    Assertions.assertThat(newPrivateKey.getBytes()).hasSize(32).isEqualTo(privateKey.getBytes());
   }
 
   @Test
@@ -164,8 +157,8 @@ public class ECDSAPrivateKeyTest {
   void shouldRaiseErrorOnECDSAPrivateKeyFromInvalidHex() {
     final var hex = "a1".repeat(31);
     Assertions.assertThatThrownBy(() -> ECDSAPrivateKey.fromString(hex))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid ECDSA private key encoding");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid ECDSA private key encoding");
   }
 
   @Test
@@ -173,8 +166,8 @@ public class ECDSAPrivateKeyTest {
   void shouldRaiseErrorOnECDSAPrivateKeyFromInvalidDerHex() {
     final var derHex = "302c020100300506032b65700420" + "a1".repeat(31);
     Assertions.assertThatThrownBy(() -> ECDSAPrivateKey.fromString(derHex))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid ECDSA private key encoding");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid ECDSA private key encoding");
   }
 
   @Test
@@ -182,8 +175,8 @@ public class ECDSAPrivateKeyTest {
   void shouldRaiseErrorOnECDSAPrivateKeyFromInvalidLengthDerHex() {
     final var derHex = "302e020100300506032b8104000a04220420" + "a1".repeat(32);
     Assertions.assertThatThrownBy(() -> ECDSAPrivateKey.fromString(derHex))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid ECDSA private key encoding");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid ECDSA private key encoding");
   }
 
   // Derive public key.
@@ -228,9 +221,7 @@ public class ECDSAPrivateKeyTest {
     final var privateKey = ECDSAPrivateKey.generate();
 
     final var signature = privateKey.sign(message.getBytes());
-    Assertions.assertThat(signature)
-      .isNotNull()
-      .hasSize(64);
+    Assertions.assertThat(signature).isNotNull().hasSize(64);
 
     // Verify signature with the public key
     final var publicKey = privateKey.getPublicKey();

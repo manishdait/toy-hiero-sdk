@@ -16,17 +16,17 @@ public class AccountDeleteTx {
 
     Client client = Client.forTestnet();
     client.setOperatorAccount(
-      AccountId.fromString(dotenv.get("HIERO_ACCOUNT_ID")),
-      PrivateKey.fromString(dotenv.get("HIERO_PRIVATE_KEY"))
-    );
+        AccountId.fromString(dotenv.get("HIERO_ACCOUNT_ID")),
+        PrivateKey.fromString(dotenv.get("HIERO_PRIVATE_KEY")));
 
     PrivateKey privateKey = PrivateKey.generate();
-    TransactionResponse transactionResponse = new AccountCreateTransaction()
-      .withKey(privateKey)
-      .withInitialBalance(1)
-      .withAccountMemo("Test SDK Delete Account")
-      .pack(client)
-      .send();
+    TransactionResponse transactionResponse =
+        new AccountCreateTransaction()
+            .withKey(privateKey)
+            .withInitialBalance(1)
+            .withAccountMemo("Test SDK Delete Account")
+            .pack(client)
+            .send();
 
     TransactionReceipt receipt = transactionResponse.queryReceipt();
 
@@ -37,13 +37,14 @@ public class AccountDeleteTx {
     AccountId accountId = receipt.accountId();
     System.out.println("Account Create with ID: " + receipt.accountId());
 
-    TransactionReceipt accountDeleteReceipt = new AccountDeleteTransaction()
-      .withAccountId(accountId)
-      .withTransferAccountId(AccountId.fromString(dotenv.get("OPERATOR_ACCOUNT_ID")))
-      .pack(client)
-      .signWith(privateKey)
-      .send()
-      .queryReceipt();
+    TransactionReceipt accountDeleteReceipt =
+        new AccountDeleteTransaction()
+            .withAccountId(accountId)
+            .withTransferAccountId(AccountId.fromString(dotenv.get("OPERATOR_ACCOUNT_ID")))
+            .pack(client)
+            .signWith(privateKey)
+            .send()
+            .queryReceipt();
 
     System.out.println(accountDeleteReceipt);
   }

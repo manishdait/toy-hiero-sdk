@@ -13,16 +13,16 @@ public class AccountCreateTx {
 
     Client client = Client.forTestnet();
     client.setOperatorAccount(
-      AccountId.fromString(dotenv.get("HIERO_ACCOUNT_ID")),
-      PrivateKey.fromString(dotenv.get("HIERO_PRIVATE_KEY"))
-    );
+        AccountId.fromString(dotenv.get("HIERO_ACCOUNT_ID")),
+        PrivateKey.fromString(dotenv.get("HIERO_PRIVATE_KEY")));
 
-    TransactionResponse transactionResponse = new io.github.manishdait.sdk.account.AccountCreateTransaction()
-      .withKey(PrivateKey.generate())
-      .withInitialBalance(1)
-      .withMemo("Test SDK")
-      .pack(client)
-      .send();
+    TransactionResponse transactionResponse =
+        new io.github.manishdait.sdk.account.AccountCreateTransaction()
+            .withKey(PrivateKey.generate())
+            .withInitialBalance(1)
+            .withMemo("Test SDK")
+            .pack(client)
+            .send();
 
     TransactionReceipt receipt = transactionResponse.queryReceipt();
     System.out.println(receipt);

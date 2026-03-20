@@ -1,5 +1,12 @@
 package io.github.manishdait.sdk.internal.key;
 
+import io.github.manishdait.sdk.key.KeyType;
+import io.github.manishdait.sdk.key.PrivateKey;
+import io.github.manishdait.sdk.key.PublicKey;
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Objects;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -16,22 +23,13 @@ import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 import org.bouncycastle.math.ec.ECPoint;
 import org.bouncycastle.util.encoders.Hex;
-import io.github.manishdait.sdk.key.KeyType;
-import io.github.manishdait.sdk.key.PrivateKey;
-import io.github.manishdait.sdk.key.PublicKey;
 import org.jspecify.annotations.NonNull;
 
-import java.math.BigInteger;
-import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.Objects;
-
-/**
- * Represents an ECDSA private key using the secp256k1 curve.
- */
+/** Represents an ECDSA private key using the secp256k1 curve. */
 public final class ECDSAPrivateKey implements PrivateKey {
   private static final int SCALAR_SIZE = 32;
-  private static final byte[] LEGACY_PREFIX_BYTES = Hex.decode("3030020100300706052b8104000a04220420");
+  private static final byte[] LEGACY_PREFIX_BYTES =
+      Hex.decode("3030020100300706052b8104000a04220420");
 
   static final ECDomainParameters CURVE;
 
@@ -39,16 +37,12 @@ public final class ECDSAPrivateKey implements PrivateKey {
 
   static {
     final X9ECParameters params = SECNamedCurves.getByName("secp256k1");
-    CURVE = new ECDomainParameters(
-      params.getCurve(),
-      params.getG(),
-      params.getN(),
-      params.getH()
-    );
+    CURVE = new ECDomainParameters(params.getCurve(), params.getG(), params.getN(), params.getH());
   }
 
   /**
    * Constructor.
+   *
    * @param scalar bytes for the ECDSA private key
    */
   private ECDSAPrivateKey(final byte[] scalar) {
@@ -57,6 +51,7 @@ public final class ECDSAPrivateKey implements PrivateKey {
 
   /**
    * Generate a {@code ECDSAPrivateKey}.
+   *
    * @return the new instance {@code ECDSAPrivateKey}
    */
   public static @NonNull ECDSAPrivateKey generate() {
@@ -85,11 +80,7 @@ public final class ECDSAPrivateKey implements PrivateKey {
     }
 
     if (hasPrefix(bytes)) {
-      byte[] scalar = Arrays.copyOfRange(
-        bytes,
-        LEGACY_PREFIX_BYTES.length,
-        bytes.length
-      );
+      byte[] scalar = Arrays.copyOfRange(bytes, LEGACY_PREFIX_BYTES.length, bytes.length);
       return fromScalar(scalar);
     }
 
@@ -131,7 +122,6 @@ public final class ECDSAPrivateKey implements PrivateKey {
     return fromBytes(Hex.decode(str.replaceFirst("^0x", "")));
   }
 
-
   @Override
   public @NonNull PublicKey getPublicKey() {
     final BigInteger d = new BigInteger(1, scalar);
@@ -153,17 +143,14 @@ public final class ECDSAPrivateKey implements PrivateKey {
   @Override
   public byte[] getDERBytes() {
     try {
-      ECPrivateKey ecPrivateKey = new ECPrivateKey(
-        CURVE.getN().bitLength(),
-        new BigInteger(1, scalar),
-        null,
-        null
-      );
+      ECPrivateKey ecPrivateKey =
+          new ECPrivateKey(CURVE.getN().bitLength(), new BigInteger(1, scalar), null, null);
 
-      PrivateKeyInfo pki = new PrivateKeyInfo(
-        new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey, SECObjectIdentifiers.secp256k1),
-        ecPrivateKey
-      );
+      PrivateKeyInfo pki =
+          new PrivateKeyInfo(
+              new AlgorithmIdentifier(
+                  X9ObjectIdentifiers.id_ecPublicKey, SECObjectIdentifiers.secp256k1),
+              ecPrivateKey);
 
       return pki.getEncoded();
     } catch (Exception e) {
@@ -205,7 +192,7 @@ public final class ECDSAPrivateKey implements PrivateKey {
   @Override
   public boolean equals(Object o) {
     if (o == this) return true;
-    if (o == null || this.getClass() !=o.getClass()) return false;
+    if (o == null || this.getClass() != o.getClass()) return false;
     return Arrays.equals(this.scalar, ((ECDSAPrivateKey) o).scalar);
   }
 
@@ -227,12 +214,11 @@ public final class ECDSAPrivateKey implements PrivateKey {
     byte[] raw = v.toByteArray();
     byte[] out = new byte[32];
     System.arraycopy(
-      raw,
-      Math.max(0, raw.length - 32),
-      out,
-      Math.max(0, 32 - raw.length),
-      Math.min(32, raw.length)
-    );
+        raw,
+        Math.max(0, raw.length - 32),
+        out,
+        Math.max(0, 32 - raw.length),
+        Math.min(32, raw.length));
     return out;
   }
 

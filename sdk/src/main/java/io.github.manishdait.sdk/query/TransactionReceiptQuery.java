@@ -1,21 +1,19 @@
 package io.github.manishdait.sdk.query;
 
+import com.hedera.hashgraph.sdk.proto.CryptoServiceGrpc;
 import com.hedera.hashgraph.sdk.proto.QueryHeader;
 import com.hedera.hashgraph.sdk.proto.Response;
 import com.hedera.hashgraph.sdk.proto.ResponseHeader;
 import com.hedera.hashgraph.sdk.proto.ResponseType;
 import com.hedera.hashgraph.sdk.proto.TransactionGetReceiptQuery;
-import com.hedera.hashgraph.sdk.proto.CryptoServiceGrpc;
-
-import io.grpc.MethodDescriptor;
 import io.github.manishdait.sdk.Client;
 import io.github.manishdait.sdk.Status;
 import io.github.manishdait.sdk.transaction.TransactionId;
 import io.github.manishdait.sdk.transaction.TransactionReceipt;
-import org.jspecify.annotations.NonNull;
-
+import io.grpc.MethodDescriptor;
 import java.util.List;
 import java.util.Objects;
+import org.jspecify.annotations.NonNull;
 
 public class TransactionReceiptQuery extends Query {
   private TransactionId transactionId;
@@ -59,16 +57,17 @@ public class TransactionReceiptQuery extends Query {
 
   @Override
   public com.hedera.hashgraph.sdk.proto.Query toProto() {
-    var receiptQuery = TransactionGetReceiptQuery.newBuilder()
-      .setTransactionID(this.transactionId.toProto())
-      .setIncludeChildReceipts(this.includeChildren)
-      .setIncludeDuplicates(this.includeDuplicates)
-      .setHeader(QueryHeader.newBuilder().setResponseType(ResponseType.ANSWER_ONLY).build())
-      .build();
+    var receiptQuery =
+        TransactionGetReceiptQuery.newBuilder()
+            .setTransactionID(this.transactionId.toProto())
+            .setIncludeChildReceipts(this.includeChildren)
+            .setIncludeDuplicates(this.includeDuplicates)
+            .setHeader(QueryHeader.newBuilder().setResponseType(ResponseType.ANSWER_ONLY).build())
+            .build();
 
     return com.hedera.hashgraph.sdk.proto.Query.newBuilder()
-      .setTransactionGetReceipt(receiptQuery)
-      .build();
+        .setTransactionGetReceipt(receiptQuery)
+        .build();
   }
 
   @Override
@@ -88,13 +87,13 @@ public class TransactionReceiptQuery extends Query {
 
     var receipt = this.execute(client).getTransactionGetReceipt().getReceipt();
 
-    final var retryable = List.of(
-      Status.UNKNOWN,
-      Status.BUSY,
-      Status.RECEIPT_NOT_FOUND,
-      Status.RECORD_NOT_FOUND,
-      Status.PLATFORM_NOT_ACTIVE
-    );
+    final var retryable =
+        List.of(
+            Status.UNKNOWN,
+            Status.BUSY,
+            Status.RECEIPT_NOT_FOUND,
+            Status.RECORD_NOT_FOUND,
+            Status.PLATFORM_NOT_ACTIVE);
 
     for (int i = 0; i < 10; i++) {
       if (retryable.contains(Status.valueOf(receipt.getStatus()))) {

@@ -6,8 +6,12 @@ public interface Key {
   com.hedera.hashgraph.sdk.proto.Key toProto();
 
   byte[] getBytes();
+
   byte[] getDERBytes();
+
   @NonNull String toHexString();
+
   @NonNull String toDERHex();
+
   @NonNull KeyType getType();
 }

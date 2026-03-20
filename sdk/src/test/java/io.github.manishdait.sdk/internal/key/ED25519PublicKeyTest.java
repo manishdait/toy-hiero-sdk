@@ -1,11 +1,9 @@
 package io.github.manishdait.sdk.internal.key;
 
+import io.github.manishdait.sdk.key.KeyType;
 import org.assertj.core.api.Assertions;
 import org.bouncycastle.math.ec.rfc8032.Ed25519;
 import org.bouncycastle.util.encoders.Hex;
-import io.github.manishdait.sdk.internal.key.ED25519PrivateKey;
-import io.github.manishdait.sdk.internal.key.ED25519PublicKey;
-import io.github.manishdait.sdk.key.KeyType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -82,8 +80,8 @@ public class ED25519PublicKeyTest {
   void shouldRaiseErrorWhenParsePublicKeyFromInvalidBytes() {
     final var bytes = Hex.decode("a1".repeat(31));
     Assertions.assertThatThrownBy(() -> ED25519PublicKey.fromBytes(bytes))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid Ed25519 public key encoding");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid Ed25519 public key encoding");
   }
 
   @Test
@@ -91,8 +89,8 @@ public class ED25519PublicKeyTest {
   void shouldRaiseErrorWhenParsePublicKeyFromInvalidDerBytes() {
     final var bytes = Hex.decode("302a300506032b6570032100" + "11".repeat(31));
     Assertions.assertThatThrownBy(() -> ED25519PublicKey.fromBytes(bytes))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid Ed25519 public key encoding");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid Ed25519 public key encoding");
   }
 
   // Parse public key from string.
@@ -154,8 +152,8 @@ public class ED25519PublicKeyTest {
   void shouldRaiseErrorWhenParsePublicKeyFromInvalidHex() {
     final var hex = "a1".repeat(31);
     Assertions.assertThatThrownBy(() -> ED25519PublicKey.fromString(hex))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid Ed25519 public key encoding");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid Ed25519 public key encoding");
   }
 
   @Test
@@ -163,8 +161,8 @@ public class ED25519PublicKeyTest {
   void shouldRaiseErrorWhenParsePublicKeyFromInvalidDerHex() {
     final var derHex = "302a300506032b6570032100" + "11".repeat(31);
     Assertions.assertThatThrownBy(() -> ED25519PublicKey.fromString(derHex))
-      .isInstanceOf(RuntimeException.class)
-      .hasMessage("Invalid Ed25519 public key encoding");
+        .isInstanceOf(RuntimeException.class)
+        .hasMessage("Invalid Ed25519 public key encoding");
   }
 
   // To string methods.
@@ -196,9 +194,7 @@ public class ED25519PublicKeyTest {
     final var privateKey = ED25519PrivateKey.generate();
 
     final var signature = privateKey.sign(message.getBytes());
-    Assertions.assertThat(signature)
-      .isNotNull()
-      .hasSize(Ed25519.SIGNATURE_SIZE);
+    Assertions.assertThat(signature).isNotNull().hasSize(Ed25519.SIGNATURE_SIZE);
 
     final var publicKey = privateKey.getPublicKey();
     Assertions.assertThat(publicKey.verify(message.getBytes(), signature)).isTrue();
