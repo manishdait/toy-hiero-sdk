@@ -4,31 +4,24 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.example</groupId>
-    <artifactId>toy-hiero-sdk</artifactId>
+    <groupId>io.github.manishdait</groupId>
+    <artifactId>hiero-lib</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>sample</artifactId>
 
-  <properties>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-
   <dependencies>
-    <dependency>
-      <groupId>org.example</groupId>
-      <artifactId>sdk</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <scope>compile</scope>
-    </dependency>
-
     <dependency>
       <groupId>io.github.cdimascio</groupId>
       <artifactId>dotenv-java</artifactId>
-      <version>3.2.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.manishdait</groupId>
+      <artifactId>sdk</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 </project>

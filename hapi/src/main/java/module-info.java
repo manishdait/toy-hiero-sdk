@@ -1,4 +1,4 @@
-module org.example.hapi {
+module io.github.manishdait.hapi {
   requires com.google.protobuf;
   requires com.google.common;
   requires io.grpc.stub;

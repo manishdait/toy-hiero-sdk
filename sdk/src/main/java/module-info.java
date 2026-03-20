@@ -1,5 +1,5 @@
-module org.example.sdk {
-  requires transitive org.example.hapi;
+module io.github.manishdait.sdk {
+  requires transitive io.github.manishdait.hapi;
   requires io.grpc;
   requires org.bouncycastle.provider;
   requires org.jspecify;
@@ -9,11 +9,11 @@ module org.example.sdk {
   requires com.fasterxml.jackson.core;
   requires com.fasterxml.jackson.databind;
 
-  exports org.example.sdk;
-  exports org.example.sdk.key;
-  exports org.example.sdk.network;
-  exports org.example.sdk.account;
-  exports org.example.sdk.transaction;
-  exports org.example.sdk.query;
-  exports org.example.sdk.address_book;
+  exports io.github.manishdait.sdk;
+  exports io.github.manishdait.sdk.key;
+  exports io.github.manishdait.sdk.network;
+  exports io.github.manishdait.sdk.account;
+  exports io.github.manishdait.sdk.transaction;
+  exports io.github.manishdait.sdk.query;
+  exports io.github.manishdait.sdk.address_book;
 }

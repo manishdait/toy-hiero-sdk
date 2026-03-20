@@ -1,8 +1,6 @@
-# toy-hiero-sdk
-A Implementation of Hiero Sdk implemented in Java, created to understand how the real SDK works under the hood. It is intentionally simplified and intended purely for learning and experimental purposes only.
+package io.github.manishdait.sample;
 
-## Basic Usage
-```java
+import io.github.cdimascio.dotenv.Dotenv;
 import io.github.manishdait.sdk.Client;
 import io.github.manishdait.sdk.account.AccountId;
 import io.github.manishdait.sdk.key.PrivateKey;
@@ -11,16 +9,18 @@ import io.github.manishdait.sdk.transaction.TransactionResponse;
 
 public class AccountCreateTx {
   public static void main(String[] args) {
+    Dotenv dotenv = Dotenv.load();
+
     Client client = Client.forTestnet();
     client.setOperatorAccount(
-      AccountId.fromString(OPERATOR_ACCOUNT_ID),
-      PrivateKey.fromString(OPERATOR_PRIVATE_KEY)
+      AccountId.fromString(dotenv.get("OPERATOR_ACCOUNT_ID")),
+      PrivateKey.fromString(dotenv.get("OPERATOR_PRIVATE_KEY"))
     );
 
-    TransactionResponse transactionResponse = new AccountCreateTransaction()
+    TransactionResponse transactionResponse = new io.github.manishdait.sdk.account.AccountCreateTransaction()
       .withKey(PrivateKey.generate())
       .withInitialBalance(1)
-      .withAccountMemo("Test SDK")
+      .withMemo("Test SDK")
       .pack(client)
       .send();
 
@@ -28,4 +28,3 @@ public class AccountCreateTx {
     System.out.println(receipt);
   }
 }
-```
