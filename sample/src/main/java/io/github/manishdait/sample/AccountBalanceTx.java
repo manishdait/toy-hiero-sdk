@@ -19,8 +19,8 @@ public class AccountBalanceTx {
 
     Client client = Client.forTestnet();
     client.setOperatorAccount(
-      AccountId.fromString(dotenv.get("OPERATOR_ACCOUNT_ID")),
-      PrivateKey.fromString(dotenv.get("OPERATOR_PRIVATE_KEY"))
+      AccountId.fromString(dotenv.get("HIERO_ACCOUNT_ID")),
+      PrivateKey.fromString(dotenv.get("HIERO_PRIVATE_KEY"))
     );
 
     PrivateKey privateKey = PrivateKey.generate();
