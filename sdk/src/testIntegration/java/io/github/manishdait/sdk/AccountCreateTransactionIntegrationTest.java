@@ -23,15 +23,9 @@ public class AccountCreateTransactionIntegrationTest {
             .withInitialBalance(Hbar.of(1))
             .pack(client);
 
-    System.out.println(client.getOperatorAccount());
-    System.out.println(client.getOperatorPrivateKey());
-
     var response = tx.send();
-    System.out.println(response);
-
     var receipt = response.queryReceipt();
 
-    System.out.println(receipt);
     assertThat(receipt).isNotNull();
     assertThat(receipt.accountId()).isNotNull();
   }
