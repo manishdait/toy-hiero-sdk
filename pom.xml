@@ -22,7 +22,7 @@
     <protobuf.version>4.31.1</protobuf.version>
     <grpc.version>1.75.0</grpc.version>
     <dotenv.version>3.2.0</dotenv.version>
-    <bouncycastle.version>1.81</bouncycastle.version>
+    <bouncycastle.version>1.83</bouncycastle.version>
     <jspecify.version>1.0.0</jspecify.version>
     <fasterxml.jackson.version>2.20.1</fasterxml.jackson.version>
     <juinit.version>5.13.4</juinit.version>
