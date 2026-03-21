@@ -1,10 +1,7 @@
-package com.example.sdk.key;
+package io.github.manishdait.sdk.key;
 
 import com.google.protobuf.ByteString;
 import com.hedera.hashgraph.sdk.proto.Key;
-import io.github.manishdait.sdk.key.KeyType;
-import io.github.manishdait.sdk.key.PrivateKey;
-import io.github.manishdait.sdk.key.PublicKey;
 import org.assertj.core.api.Assertions;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.DisplayName;

@@ -136,4 +136,9 @@ public abstract class Query extends Executable<com.hedera.hashgraph.sdk.proto.Qu
   protected com.hedera.hashgraph.sdk.proto.Query buildRequest() {
     return this.toProto();
   }
+
+  @Override
+  protected Status getStatus(Response response) {
+    return Status.valueOf(getResponseHeader(response).getNodeTransactionPrecheckCode());
+  }
 }

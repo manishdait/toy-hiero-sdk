@@ -10,11 +10,18 @@ import io.github.manishdait.sdk.network.NetworkType;
 import io.github.manishdait.sdk.network.Node;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import java.time.Duration;
 import java.util.Objects;
 import org.jspecify.annotations.NonNull;
 
 /** Client for Hiero network containing the operator account and network information. */
 public class Client {
+  private int maxAttempts = Config.DEFAULT_MAX_ATTEMPTS;
+  private Duration minBackoff = Config.DEFAULT_MIN_BACKOFF;
+  private Duration maxBackoff = Config.DEFAULT_MAX_BACKOFF;
+  private Duration grpcTimeout = Config.DEFAULT_GRPC_TIMEOUT;
+  private Duration requestTimeout = Config.DEFAULT_REQUEST_TIMEOUT;
+
   private Account operatorAccount;
   private final Network network;
 
@@ -30,14 +37,75 @@ public class Client {
 
     this.network = network;
     this.mirrorChannel =
-      ManagedChannelBuilder.forTarget(Config.MIRROR_NODE_ADDRESS.get(network.getNetworkType()))
-        .build();
+        ManagedChannelBuilder.forTarget(Config.MIRROR_NODE_ADDRESS.get(network.getNetworkType()))
+            .build();
 
     if (network.getNetworkType() != NetworkType.SOLO) {
       this.network.setNodes(this);
     }
   }
-  ;
+
+  public int getMaxAttempts() {
+    return maxAttempts;
+  }
+
+  public Client withMaxAttempts(int maxAttempts) {
+    if (maxAttempts <= 0) {
+      throw new IllegalArgumentException("maxAttempts must be greater than 0");
+    }
+    this.maxAttempts = maxAttempts;
+    return this;
+  }
+
+  public Duration getMinBackoff() {
+    return minBackoff;
+  }
+
+  public Client withMinBackoff(@NonNull final Duration minBackoff) {
+    Objects.requireNonNull(minBackoff, "minBackoff must not be null");
+
+    if (minBackoff.toNanos() <= 0 && minBackoff.compareTo(maxBackoff) < 0) {
+      throw new IllegalArgumentException(
+          "minBackoff must be greater than 0 and less than maxBackoff");
+    }
+
+    this.minBackoff = minBackoff;
+    return this;
+  }
+
+  public Duration getMaxBackoff() {
+    return maxBackoff;
+  }
+
+  public Client withMaxBackoff(@NonNull final Duration maxBackoff) {
+    Objects.requireNonNull(maxBackoff, "maxBackoff must not be null");
+
+    if (maxBackoff.toNanos() <= 0 && maxBackoff.compareTo(minBackoff) > 0) {
+      throw new IllegalArgumentException(
+          "maxBackoff must be greater than 0 and greater than minBackoff");
+    }
+
+    this.maxBackoff = maxBackoff;
+    return this;
+  }
+
+  public Duration getRequestTimeout() {
+    return requestTimeout;
+  }
+
+  public Client withRequestTimeout(final Duration requestTimeout) {
+    this.requestTimeout = requestTimeout;
+    return this;
+  }
+
+  public Duration getGrpcTimeout() {
+    return grpcTimeout;
+  }
+
+  public Client withGrpcTimeout(final Duration grpcTimeout) {
+    this.grpcTimeout = grpcTimeout;
+    return this;
+  }
 
   /**
    * Create a client for testnet.

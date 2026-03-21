@@ -1,11 +1,11 @@
 package io.github.manishdait.sdk;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 import io.github.manishdait.sdk.account.AccountCreateTransaction;
 import io.github.manishdait.sdk.key.PrivateKey;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class AccountCreateTransactionIntegrationTest {
   Client client;
@@ -17,10 +17,11 @@ public class AccountCreateTransactionIntegrationTest {
 
   @Test
   void shouldCreateAccount() {
-    var tx = new AccountCreateTransaction()
-      .withKey(PrivateKey.generate())
-      .withInitialBalance(Hbar.of(1))
-      .pack(client);
+    var tx =
+        new AccountCreateTransaction()
+            .withKey(PrivateKey.generate())
+            .withInitialBalance(Hbar.of(1))
+            .pack(client);
 
     System.out.println(client.getOperatorAccount());
     System.out.println(client.getOperatorPrivateKey());

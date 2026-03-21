@@ -95,7 +95,7 @@ public class TransactionReceiptQuery extends Query {
             Status.RECORD_NOT_FOUND,
             Status.PLATFORM_NOT_ACTIVE);
 
-    for (int i = 0; i < 60; i++) {
+    for (int i = 0; i < 10; i++) {
       if (retryable.contains(Status.valueOf(receipt.getStatus()))) {
         receipt = this.execute(client).getTransactionGetReceipt().getReceipt();
         continue;

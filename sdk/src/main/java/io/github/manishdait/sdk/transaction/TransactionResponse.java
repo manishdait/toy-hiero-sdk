@@ -1,6 +1,5 @@
 package io.github.manishdait.sdk.transaction;
 
-import com.hedera.hashgraph.sdk.proto.*;
 import io.github.manishdait.sdk.Client;
 import io.github.manishdait.sdk.Status;
 import io.github.manishdait.sdk.query.TransactionReceiptQuery;

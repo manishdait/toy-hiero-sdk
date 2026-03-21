@@ -1,10 +1,12 @@
 package io.github.manishdait.sdk.network;
 
 import io.github.manishdait.sdk.account.AccountId;
+import io.github.manishdait.sdk.internal.Config;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.time.Duration;
 import java.util.Objects;
 import org.jspecify.annotations.NonNull;
 
@@ -14,6 +16,12 @@ public class Node {
   private final AccountId accountId;
 
   private ManagedChannel channel;
+
+  private Duration minBackoff = Config.DEFAULT_NODE_MIN_BACKOFF;
+  private Duration maxBackoff = Config.DEFAULT_NODE_MAX_BACKOFF;
+  private Duration currentBackoff = minBackoff;
+  private long readmitTime = System.nanoTime();
+  private long badGrpcResponseCount = 0;
 
   public Node(@NonNull final String address, @NonNull final String accountId) {
     this(
@@ -47,15 +55,64 @@ public class Node {
     return "%s:%d".formatted(this.address, this.port);
   }
 
+  public Duration getMinBackoff() {
+    return minBackoff;
+  }
+
+  public Duration getMaxBackoff() {
+    return maxBackoff;
+  }
+
+  public Duration getCurrentBackoff() {
+    return currentBackoff;
+  }
+
+  public long getReadmitTime() {
+    return readmitTime;
+  }
+
+  public long getBadGrpcResponseCount() {
+    return badGrpcResponseCount;
+  }
+
   public ManagedChannel getChannel() {
     if (channel != null) return channel;
     channel = ManagedChannelBuilder.forAddress(this.address, this.port).usePlaintext().build();
     return channel;
   }
 
+  public void close() {
+    if (channel != null && !channel.isShutdown()) {
+      channel.shutdown();
+    }
+  }
+
+  public boolean isHealthy() {
+    return readmitTime <= System.nanoTime();
+  }
+
+  public void increaseBackoff() {
+    badGrpcResponseCount += 1;
+    currentBackoff = currentBackoff.multipliedBy(2);
+
+    if (currentBackoff.compareTo(maxBackoff) > 0) {
+      currentBackoff = maxBackoff;
+    }
+
+    readmitTime = currentBackoff.toNanos() + System.nanoTime();
+  }
+
+  public void decreaseBackoff() {
+    currentBackoff = currentBackoff.dividedBy(2);
+
+    if (currentBackoff.compareTo(minBackoff) < 0) {
+      currentBackoff = minBackoff;
+    }
+  }
+
   @Override
   public String toString() {
-    return "Node["
+    return "Node{"
         + "address='"
         + address
         + '\''
@@ -65,7 +122,7 @@ public class Node {
         + accountId
         + ", channel="
         + channel
-        + ']';
+        + '}';
   }
 
   protected static String resolveAddressFromBytes(byte[] bytes) {

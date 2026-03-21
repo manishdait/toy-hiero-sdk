@@ -1,10 +1,18 @@
 package io.github.manishdait.sdk.internal;
 
 import io.github.manishdait.sdk.network.NetworkType;
+import java.time.Duration;
 import java.util.Map;
 
 public class Config {
-  public static final int MAX_ATTEMPTS = 10;
+  public static final int DEFAULT_MAX_ATTEMPTS = 10;
+  public static final Duration DEFAULT_MIN_BACKOFF = Duration.ofMillis(250L);
+  public static final Duration DEFAULT_MAX_BACKOFF = Duration.ofSeconds(8L);
+  public static final Duration DEFAULT_NODE_MIN_BACKOFF = Duration.ofHours(1L);
+  public static final Duration DEFAULT_NODE_MAX_BACKOFF = Duration.ofSeconds(8L);
+
+  public static final Duration DEFAULT_REQUEST_TIMEOUT = Duration.ofMinutes(2L);
+  public static final Duration DEFAULT_GRPC_TIMEOUT = Duration.ofSeconds(10L);
 
   public static final int TLS_PORT = 50212;
   public static final int PLAIN_PORT = 50211;

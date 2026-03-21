@@ -102,6 +102,11 @@ public class PackedTransaction<T extends Transaction<T>>
   }
 
   @Override
+  protected Status getStatus(TransactionResponse transactionResponse) {
+    return Status.valueOf(transactionResponse.getNodeTransactionPrecheckCode());
+  }
+
+  @Override
   protected MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction, TransactionResponse>
       getMethodDescriptor() {
     return this.methodDescriptor;
