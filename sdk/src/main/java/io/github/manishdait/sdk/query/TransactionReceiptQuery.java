@@ -8,10 +8,10 @@ import com.hedera.hashgraph.sdk.proto.ResponseType;
 import com.hedera.hashgraph.sdk.proto.TransactionGetReceiptQuery;
 import io.github.manishdait.sdk.Client;
 import io.github.manishdait.sdk.Status;
+import io.github.manishdait.sdk.internal.ExecutionState;
 import io.github.manishdait.sdk.transaction.TransactionId;
 import io.github.manishdait.sdk.transaction.TransactionReceipt;
 import io.grpc.MethodDescriptor;
-import java.util.List;
 import java.util.Objects;
 import org.jspecify.annotations.NonNull;
 
@@ -86,26 +86,45 @@ public class TransactionReceiptQuery extends Query {
     this.doPreQueryCheck(client);
 
     var receipt = this.execute(client).getTransactionGetReceipt().getReceipt();
+    return TransactionReceipt.fromProto(receipt);
+  }
 
-    final var retryable =
-        List.of(
-            Status.UNKNOWN,
-            Status.BUSY,
-            Status.RECEIPT_NOT_FOUND,
-            Status.RECORD_NOT_FOUND,
-            Status.PLATFORM_NOT_ACTIVE);
+  @Override
+  protected ExecutionState getExecutionState(Response queryResponse) {
+    final var status =
+        Status.valueOf(getResponseHeader(queryResponse).getNodeTransactionPrecheckCode());
 
-    for (int i = 0; i < 10; i++) {
-      if (retryable.contains(Status.valueOf(receipt.getStatus()))) {
-        receipt = this.execute(client).getTransactionGetReceipt().getReceipt();
-        continue;
+    switch (status) {
+      case Status.UNKNOWN,
+          Status.BUSY,
+          Status.RECEIPT_NOT_FOUND,
+          Status.RECORD_NOT_FOUND,
+          Status.PLATFORM_NOT_ACTIVE -> {
+        return ExecutionState.RETRY;
       }
 
-      if (Status.valueOf(receipt.getStatus()) == Status.SUCCESS) {
-        return TransactionReceipt.fromProto(receipt);
+      case Status.OK -> {
+        break;
+      }
+
+      default -> {
+        return ExecutionState.FAIL;
       }
     }
 
-    return TransactionReceipt.fromProto(receipt);
+    var receiptStatus =
+        Status.valueOf(queryResponse.getTransactionGetReceipt().getReceipt().getStatus());
+
+    return switch (receiptStatus) {
+      case Status.UNKNOWN,
+          Status.BUSY,
+          Status.RECEIPT_NOT_FOUND,
+          Status.RECORD_NOT_FOUND,
+          Status.OK,
+          Status.PLATFORM_NOT_ACTIVE ->
+          ExecutionState.RETRY;
+      case SUCCESS -> ExecutionState.FINISH;
+      default -> ExecutionState.FAIL;
+    };
   }
 }
