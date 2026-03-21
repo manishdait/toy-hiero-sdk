@@ -26,7 +26,7 @@
     <jspecify.version>1.0.0</jspecify.version>
     <fasterxml.jackson.version>2.20.1</fasterxml.jackson.version>
     <juinit.version>5.13.4</juinit.version>
-    <assertj.version>3.27.3</assertj.version>
+    <assertj.version>3.27.7</assertj.version>
     <protobuf-plugin.version>0.6.1</protobuf-plugin.version>
     <os-maven-plugin.version>1.7.1</os-maven-plugin.version>
     <spotless.version>3.3.0</spotless.version>
